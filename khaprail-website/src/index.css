@@ -1,0 +1,138 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/fraunces";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: var(--font-serif);
+    --font-sans: 'Geist Variable', sans-serif;
+    --font-serif: 'Fraunces Variable', ui-serif, Georgia, serif;
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/*
+  Khaprail Tiles design tokens (docs/02-DESIGN-SYSTEM.md at repo root).
+  Heritage clay-tile brand: warm terracotta/sand/espresso, not shadcn's
+  default neutral grayscale. Reuse these tokens verbatim in future
+  Khaprail-family brand sites rather than hand-picking new ones per site.
+*/
+:root {
+    --background: #FAF6F0;
+    --foreground: #3B2A20;
+    --card: #FFFFFF;
+    --card-foreground: #3B2A20;
+    --popover: #FFFFFF;
+    --popover-foreground: #3B2A20;
+    --primary: #B5502B;
+    --primary-foreground: #FAF6F0;
+    --secondary: #E8DCC8;
+    --secondary-foreground: #3B2A20;
+    --muted: #F1E9DD;
+    --muted-foreground: #7A6A58;
+    --accent: #C96A3D;
+    --accent-foreground: #FAF6F0;
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: #E3D5C0;
+    --input: #E3D5C0;
+    --ring: #B5502B;
+    --chart-1: #B5502B;
+    --chart-2: #C96A3D;
+    --chart-3: #D98F5F;
+    --chart-4: #E8DCC8;
+    --chart-5: #7A6A58;
+    --radius: 0.625rem;
+    --sidebar: #3B2A20;
+    --sidebar-foreground: #FAF6F0;
+    --sidebar-primary: #B5502B;
+    --sidebar-primary-foreground: #FAF6F0;
+    --sidebar-accent: #C96A3D;
+    --sidebar-accent-foreground: #FAF6F0;
+    --sidebar-border: #4A3628;
+    --sidebar-ring: #C96A3D;
+}
+
+.dark {
+    --background: #241a13;
+    --foreground: #F1E9DD;
+    --card: #2E2119;
+    --card-foreground: #F1E9DD;
+    --popover: #2E2119;
+    --popover-foreground: #F1E9DD;
+    --primary: #D98F5F;
+    --primary-foreground: #241a13;
+    --secondary: #4A3628;
+    --secondary-foreground: #F1E9DD;
+    --muted: #3B2A20;
+    --muted-foreground: #C9B8A2;
+    --accent: #C96A3D;
+    --accent-foreground: #F1E9DD;
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: rgba(241, 233, 221, 0.12);
+    --input: rgba(241, 233, 221, 0.15);
+    --ring: #D98F5F;
+    --chart-1: #D98F5F;
+    --chart-2: #C96A3D;
+    --chart-3: #B5502B;
+    --chart-4: #7A6A58;
+    --chart-5: #E8DCC8;
+    --sidebar: #1C140E;
+    --sidebar-foreground: #F1E9DD;
+    --sidebar-primary: #D98F5F;
+    --sidebar-primary-foreground: #1C140E;
+    --sidebar-accent: #C96A3D;
+    --sidebar-accent-foreground: #F1E9DD;
+    --sidebar-border: rgba(241, 233, 221, 0.12);
+    --sidebar-ring: #D98F5F;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground font-sans;
+    }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+    }
+}
