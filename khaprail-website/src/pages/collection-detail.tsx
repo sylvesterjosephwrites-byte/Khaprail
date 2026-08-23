@@ -1,16 +1,19 @@
 import { Link, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { ProductCard } from "@/components/products/product-card"
 import { useCollection } from "@/hooks/use-collection"
+import { useProductsByCollection } from "@/hooks/use-products-by-collection"
 import { buildWhatsAppUrl } from "@/lib/whatsapp"
 
-// /collections/[slug] — collection landing page (01-SITE-MAP.md). Products
-// within a collection land in batch 5 (04-PRODUCT-LISTING-FILTERS.md); until
-// then this shows an honest empty state rather than fabricated listings
-// (02-DESIGN-SYSTEM.md "honest data only").
+// /collections/[slug] — collection landing page (01-SITE-MAP.md). Shows the
+// real products in this collection (04-PRODUCT-LISTING-FILTERS.md's
+// ProductCard); falls back to an honest empty state when a collection has
+// none yet rather than fabricating listings (02-DESIGN-SYSTEM.md).
 export function CollectionDetail() {
   const { slug } = useParams<{ slug: string }>()
   const { collection, isLoading, error } = useCollection(slug)
+  const { products, isLoading: productsLoading } = useProductsByCollection(collection?.id ?? null)
 
   if (isLoading) {
     return (
@@ -50,25 +53,44 @@ export function CollectionDetail() {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-5xl px-4 py-16 text-center sm:px-6">
-        <p className="text-muted-foreground">
-          Products in this collection are coming soon. In the meantime, get in touch and we'll walk you
-          through what's available.
-        </p>
-        <Button
-          size="lg"
-          className="mt-6 h-12 px-6 text-base"
-          nativeButton={false}
-          render={
-            <a
-              href={buildWhatsAppUrl(`Hi, I'm interested in ${collection.name}. Could you share more details?`)}
-              target="_blank"
-              rel="noreferrer"
-            />
-          }
-        >
-          Ask About {collection.name} on WhatsApp
-        </Button>
+      <div className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6">
+        {productsLoading ? (
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex flex-col gap-2">
+                <Skeleton className="aspect-square w-full rounded-xl" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+            ))}
+          </div>
+        ) : products.length > 0 ? (
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center">
+            <p className="text-muted-foreground">
+              Products in this collection are coming soon. In the meantime, get in touch and we'll walk you
+              through what's available.
+            </p>
+            <Button
+              size="lg"
+              className="mt-6 h-12 px-6 text-base"
+              nativeButton={false}
+              render={
+                <a
+                  href={buildWhatsAppUrl(`Hi, I'm interested in ${collection.name}. Could you share more details?`)}
+                  target="_blank"
+                  rel="noreferrer"
+                />
+              }
+            >
+              Ask About {collection.name} on WhatsApp
+            </Button>
+          </div>
+        )}
       </div>
     </main>
   )
