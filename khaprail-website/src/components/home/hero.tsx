@@ -9,7 +9,7 @@ export function Hero() {
         <span className="rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary">
           Est. 1982 · Lahore, Pakistan
         </span>
-        <h1 className="max-w-2xl font-heading text-4xl sm:text-5xl">
+        <h1 className="max-w-2xl font-heading text-5xl font-semibold leading-[1.1] sm:text-6xl lg:text-7xl">
           Clay Roof &amp; Terracotta Tiles, Shaped in Lahore Since 1982
         </h1>
         <p className="max-w-xl text-lg text-muted-foreground">

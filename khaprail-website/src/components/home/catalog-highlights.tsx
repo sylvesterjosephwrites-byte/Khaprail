@@ -48,7 +48,7 @@ function ProductRail({ title, emptyCopy, viewAllTo, products, isLoading, error }
   return (
     <section>
       <div className="mb-6 flex items-end justify-between">
-        <h2 className="font-heading text-2xl">{title}</h2>
+        <h2 className="font-heading text-3xl font-semibold sm:text-4xl">{title}</h2>
         {hasProducts && (
           <Link to={viewAllTo} className="text-sm font-medium text-primary hover:underline">
             View All

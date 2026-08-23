@@ -10,7 +10,7 @@ export function CollectionsShowcase() {
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6">
       <div className="mb-10 text-center">
-        <h2 className="font-heading text-3xl">Shop by Collection</h2>
+        <h2 className="font-heading text-3xl font-semibold sm:text-4xl">Shop by Collection</h2>
         <p className="mt-2 text-muted-foreground">Roof, floor, and wall tiles grouped the way you'd ask for them.</p>
       </div>
       {isLoading ? (

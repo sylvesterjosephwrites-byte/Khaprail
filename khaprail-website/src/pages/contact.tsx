@@ -8,7 +8,7 @@ import { buildWhatsAppUrl, WHATSAPP_DISPLAY_NUMBER } from "@/lib/whatsapp"
 export function Contact() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center gap-6 px-4 py-24 text-center sm:px-6">
-      <h1 className="font-heading text-4xl">Get in Touch</h1>
+      <h1 className="font-heading text-5xl font-semibold sm:text-6xl">Get in Touch</h1>
       <p className="max-w-lg text-lg text-muted-foreground">
         The fastest way to reach us is WhatsApp — message us for samples, pricing, or anything else about our
         clay and terracotta tiles.

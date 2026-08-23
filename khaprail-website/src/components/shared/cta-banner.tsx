@@ -6,7 +6,7 @@ export function CtaBanner() {
   return (
     <section className="bg-primary py-16 text-primary-foreground">
       <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-4 px-4 text-center sm:px-6">
-        <h2 className="font-heading text-3xl">Ready to See the Clay in Person?</h2>
+        <h2 className="font-heading text-3xl font-semibold sm:text-4xl">Ready to See the Clay in Person?</h2>
         <p className="max-w-xl text-primary-foreground/90">
           Request a free sample or download our full catalog — we'll follow up on WhatsApp.
         </p>

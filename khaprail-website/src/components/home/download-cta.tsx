@@ -25,7 +25,7 @@ export function DownloadCta() {
   return (
     <section className="border-t border-border bg-secondary/30 py-16">
       <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 px-4 text-center sm:px-6">
-        <h2 className="font-heading text-3xl">Get the Full Catalog</h2>
+        <h2 className="font-heading text-3xl font-semibold sm:text-4xl">Get the Full Catalog</h2>
         <p className="max-w-xl text-muted-foreground">
           Every product, size, and collection in one branded PDF — generated live from our current catalog.
         </p>

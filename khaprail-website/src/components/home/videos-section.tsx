@@ -11,7 +11,7 @@ export function VideosSection() {
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6">
       <div className="mb-10 text-center">
-        <h2 className="font-heading text-3xl">From the Workshop</h2>
+        <h2 className="font-heading text-3xl font-semibold sm:text-4xl">From the Workshop</h2>
         <p className="mt-2 text-muted-foreground">See our tiles being made and installed.</p>
       </div>
       {isLoading ? (

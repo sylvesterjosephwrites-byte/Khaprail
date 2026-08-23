@@ -49,7 +49,7 @@ export function CollectionDetail() {
               <img src={collection.cover_image_url} alt="" className="h-full w-full object-cover" />
             )}
           </div>
-          <h1 className="font-heading text-4xl">{collection.name}</h1>
+          <h1 className="font-heading text-5xl font-semibold sm:text-6xl">{collection.name}</h1>
         </div>
       </div>
 

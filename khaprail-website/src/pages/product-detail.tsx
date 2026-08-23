@@ -114,7 +114,7 @@ export function ProductDetail() {
 
       {relatedProducts.products.length > 0 && (
         <div className="mx-auto w-full max-w-6xl border-t border-border px-4 py-16 sm:px-6">
-          <h2 className="mb-8 font-heading text-2xl">You May Also Like</h2>
+          <h2 className="mb-8 font-heading text-3xl font-semibold sm:text-4xl">You May Also Like</h2>
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
             {relatedProducts.products.map((related) => (
               <ProductCard key={related.id} product={related} />
