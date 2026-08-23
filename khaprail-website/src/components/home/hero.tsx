@@ -2,10 +2,12 @@ import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { buildWhatsAppUrl } from "@/lib/whatsapp"
 import { HeroTile } from "@/components/home/hero-tile"
+import { HeroTilePattern } from "@/components/home/hero-tile-pattern"
 
 export function Hero() {
   return (
-    <section className="border-b border-border bg-secondary/40">
+    <section className="relative overflow-hidden border-b border-border bg-secondary/40">
+      <HeroTilePattern className="pointer-events-none absolute inset-0 -z-10 h-full w-full overflow-hidden" />
       <div className="mx-auto grid w-full max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
         <div className="flex flex-col items-center gap-6 text-center lg:items-start lg:text-left">
           <span className="rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary">
