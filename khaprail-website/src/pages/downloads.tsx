@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useCollections } from "@/hooks/use-collections"
 import { useDownloadableProducts } from "@/hooks/use-downloadable-products"
-import type { CatalogCollection } from "@/lib/pdf/catalog-document"
+import { buildCatalogCollections } from "@/lib/build-catalog-collections"
 
 // @react-pdf/renderer is large — only load it once a visitor is actually on
 // this page (same reasoning as the PDP's lazy DownloadSpecSheetButton).
@@ -14,8 +14,6 @@ const DownloadSpecSheetButton = lazy(() =>
   import("@/components/shared/download-spec-sheet-button").then((m) => ({ default: m.DownloadSpecSheetButton }))
 )
 
-const OTHER_GROUP_NAME = "Other"
-
 // /downloads (01-SITE-MAP.md) — the Hero's "Download Catalog" CTA points
 // here. Both the full catalog and every spec sheet are generated live from
 // real `products`/`collections` data (@react-pdf/renderer), never a static
@@ -25,14 +23,7 @@ export function Downloads() {
   const { products, isLoading: productsLoading } = useDownloadableProducts()
   const isLoading = collectionsLoading || productsLoading
 
-  const collectionNameById = new Map(collections.map((c) => [c.id, c.name]))
-  const groups = new Map<string, CatalogCollection>()
-  for (const product of products) {
-    const groupName = (product.collection_id && collectionNameById.get(product.collection_id)) || OTHER_GROUP_NAME
-    if (!groups.has(groupName)) groups.set(groupName, { name: groupName, products: [] })
-    groups.get(groupName)!.products.push({ name: product.name, size: product.size })
-  }
-  const catalogCollections = Array.from(groups.values())
+  const catalogCollections = buildCatalogCollections(products, collections)
 
   return (
     <main className="flex-1">

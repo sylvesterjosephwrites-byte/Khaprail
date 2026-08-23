@@ -4,3 +4,6 @@
 # OS/editor cruft
 .DS_Store
 Thumbs.db
+
+# Vercel CLI project link
+.vercel

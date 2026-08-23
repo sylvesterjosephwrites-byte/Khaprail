@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/accordion"
 import { Skeleton } from "@/components/ui/skeleton"
 import { NAV_LINKS } from "@/lib/nav-links"
+import { buildWhatsAppUrl, DEFAULT_WHATSAPP_MESSAGE } from "@/lib/whatsapp"
 import type { Collection } from "@/types/collection"
 
 interface MobileNavProps {
@@ -32,7 +33,7 @@ export function MobileNav({ collections, isLoading, error }: MobileNavProps) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
-        render={<Button variant="ghost" size="icon" className="lg:hidden" />}
+        render={<Button variant="ghost" size="icon" className="size-11 lg:hidden" />}
       >
         <MenuIcon />
         <span className="sr-only">Open menu</span>
@@ -92,13 +93,20 @@ export function MobileNav({ collections, isLoading, error }: MobileNavProps) {
               render={
                 <Link
                   to={link.to}
-                  className="rounded-lg py-2.5 text-sm font-medium hover:bg-muted"
+                  className="flex min-h-11 items-center rounded-lg py-2.5 font-heading text-base font-semibold hover:bg-muted"
                 />
               }
             >
               {link.label}
             </SheetClose>
           ))}
+          <Button
+            className="mt-2 h-11 w-full text-base"
+            nativeButton={false}
+            render={<a href={buildWhatsAppUrl(DEFAULT_WHATSAPP_MESSAGE)} target="_blank" rel="noreferrer" />}
+          >
+            Get a Sample
+          </Button>
         </nav>
       </SheetContent>
     </Sheet>

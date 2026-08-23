@@ -5,6 +5,8 @@ import { CollectionsIndex } from "@/pages/collections-index"
 import { CollectionDetail } from "@/pages/collection-detail"
 import { ProductsListing } from "@/pages/products-listing"
 import { ProductDetail } from "@/pages/product-detail"
+import { NewArrivals } from "@/pages/new-arrivals"
+import { BestSellers } from "@/pages/best-sellers"
 import { About } from "@/pages/about"
 import { Contact } from "@/pages/contact"
 import { Videos } from "@/pages/videos"
@@ -21,7 +23,6 @@ import { AdminFilterTypesList } from "@/pages/admin/filter-types-list"
 import { AdminBlogList } from "@/pages/admin/blog-list"
 import { AdminBlogEditor } from "@/pages/admin/blog-editor"
 import { AdminSampleInquiriesList } from "@/pages/admin/sample-inquiries-list"
-import { ComingSoon } from "@/pages/coming-soon"
 import { AuthProvider } from "@/lib/auth-context"
 import { ProtectedRoute } from "@/components/admin/protected-route"
 import { AdminLayout } from "@/components/admin/admin-layout"
@@ -38,8 +39,8 @@ function App() {
             <Route path="/collections/:slug" element={<CollectionDetail />} />
             <Route path="/products" element={<ProductsListing />} />
             <Route path="/products/:slug" element={<ProductDetail />} />
-            <Route path="/new-arrivals" element={<ComingSoon title="New Arrivals" />} />
-            <Route path="/best-sellers" element={<ComingSoon title="Best Sellers" />} />
+            <Route path="/new-arrivals" element={<NewArrivals />} />
+            <Route path="/best-sellers" element={<BestSellers />} />
             <Route path="/videos" element={<Videos />} />
             <Route path="/downloads" element={<Downloads />} />
             <Route path="/blog" element={<BlogIndex />} />

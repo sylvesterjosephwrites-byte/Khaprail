@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { buildWhatsAppUrl } from "@/lib/whatsapp"
+import { buildSampleRequestMessage, buildWhatsAppUrl } from "@/lib/whatsapp"
 import type { Product } from "@/types/product"
 
 const NEW_ARRIVAL_WINDOW_DAYS = 60
@@ -45,7 +45,7 @@ export function ProductCard({ product }: ProductCardProps) {
           nativeButton={false}
           render={
             <a
-              href={buildWhatsAppUrl(`Hi, I'd like to request a sample of ${product.name}.`)}
+              href={buildWhatsAppUrl(buildSampleRequestMessage(product.name))}
               target="_blank"
               rel="noreferrer"
             />

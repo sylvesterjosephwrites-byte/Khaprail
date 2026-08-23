@@ -12,7 +12,8 @@ Heritage clay-tile brand — warm, natural, craft-forward. Avoid cold tech-start
 
 ## Typography
 
-- A serif or slab-serif display face for headings (craft/heritage feel), clean sans for body text
+- Single type family site-wide: **Baloo 2** (variable, weights 400–800), matching the real Khaprail logo wordmark — a bold, rounded, geometric sans-serif (thick uniform strokes, single-story "a," rounded dot on the "i," soft curved terminals). No separate heading/body pairing; hierarchy comes from weight (400/500 for body copy, 600/700 for headings, nav, and buttons), not a typeface switch. Replaces the earlier Fraunces (heading) + Geist (body) pairing chosen in batch 1 before the real logo font was confirmed.
+- If a future page ever needs Baloo 2 to feel less "bubbly" at very small sizes, **Quicksand** is the confirmed fallback (same rounded-geometric family, more restrained) — swap the `@fontsource-variable/baloo-2` import and the `--font-display` value in `src/index.css` for `@fontsource-variable/quicksand` / `'Quicksand Variable'`, nothing else needs to change.
 - Generous line-height on body copy — this audience includes older, non-tech-fluent visitors researching a home-construction decision, not a fast tech audience
 
 ## Spacing / layout

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { supabase } from "@/lib/supabase"
-import { buildWhatsAppUrl } from "@/lib/whatsapp"
+import { buildSampleRequestMessage, buildWhatsAppUrl } from "@/lib/whatsapp"
 
 interface SampleRequestDialogProps {
   productId: string
@@ -26,7 +26,7 @@ export function SampleRequestDialog({ productId, productName }: SampleRequestDia
   const [open, setOpen] = useState(false)
   const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
-  const [message, setMessage] = useState(`Hi, I'd like to request a sample of ${productName}.`)
+  const [message, setMessage] = useState(buildSampleRequestMessage(productName))
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [logError, setLogError] = useState<string | null>(null)
 

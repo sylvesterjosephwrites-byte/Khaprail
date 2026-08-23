@@ -12,6 +12,7 @@ interface CollectionsMegaMenuProps {
   collections: Collection[]
   isLoading: boolean
   error: string | null
+  triggerClassName?: string
 }
 
 /**
@@ -20,7 +21,7 @@ interface CollectionsMegaMenuProps {
  * focus move; Enter/click follow the card's link; Escape-to-close and
  * focus-return-to-trigger are handled by the NavigationMenu primitive itself.
  */
-export function CollectionsMegaMenu({ collections, isLoading, error }: CollectionsMegaMenuProps) {
+export function CollectionsMegaMenu({ collections, isLoading, error, triggerClassName }: CollectionsMegaMenuProps) {
   const cardRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const primary = collections.filter((c) => !c.is_secondary)
   const secondary = collections.filter((c) => c.is_secondary)
@@ -41,7 +42,7 @@ export function CollectionsMegaMenu({ collections, isLoading, error }: Collectio
 
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger>Our Collection</NavigationMenuTrigger>
+      <NavigationMenuTrigger className={triggerClassName}>Our Collection</NavigationMenuTrigger>
       <NavigationMenuContent>
         <div className="w-[min(90vw,54rem)] p-6">
           {isLoading ? (
