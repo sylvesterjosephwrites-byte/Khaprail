@@ -16,6 +16,7 @@ export function NewArrivalsSection() {
         products={products}
         isLoading={isLoading}
         error={error}
+        tone="warm"
       />
     </div>
   )

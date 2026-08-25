@@ -20,6 +20,7 @@ export function BestSellersSection() {
         isLoading={isLoading}
         error={error}
         hideWhenEmpty
+        tone="navy"
       />
     </div>
   )

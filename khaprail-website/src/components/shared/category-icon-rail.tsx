@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { CATEGORY_FILL_PALETTE } from "@/lib/category-fill-palette"
 import type { Category } from "@/types/category"
 
 interface CategoryIconRailProps {
@@ -12,7 +13,7 @@ interface CategoryIconRailProps {
 
 // Circular category-icon row (10-HOMEPAGE-SPEC.md "Featured Categories",
 // 11-CATEGORY-LISTING-SPEC.md subcategory row) — horizontally scrollable
-// with arrow controls, image inside a circle + label underneath
+// with arrow controls, image inside a colored circle + label underneath
 // (02-DESIGN-SYSTEM.md "recognition over recall").
 export function CategoryIconRail({ categories, isLoading }: CategoryIconRailProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -49,13 +50,16 @@ export function CategoryIconRail({ categories, isLoading }: CategoryIconRailProp
         <span className="sr-only">Scroll left</span>
       </Button>
       <div ref={scrollRef} className="flex flex-1 snap-x gap-6 overflow-x-auto py-1">
-        {categories.map((category) => (
+        {categories.map((category, index) => (
           <Link
             key={category.id}
             to={`/categories/${category.slug}`}
             className="flex w-24 shrink-0 snap-start flex-col items-center gap-2 text-center outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-lg p-1"
           >
-            <span className="flex size-20 items-center justify-center overflow-hidden rounded-full bg-muted shadow-sm">
+            <span
+              className="flex size-20 items-center justify-center overflow-hidden rounded-full shadow-sm"
+              style={{ backgroundColor: CATEGORY_FILL_PALETTE[index % CATEGORY_FILL_PALETTE.length] }}
+            >
               {category.cover_image_url && (
                 <img src={category.cover_image_url} alt="" className="h-full w-full object-cover" />
               )}

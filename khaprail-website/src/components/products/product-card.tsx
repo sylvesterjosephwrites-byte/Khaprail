@@ -16,23 +16,28 @@ interface ProductCardProps {
   product: Product
 }
 
-// Listing card per 04-PRODUCT-LISTING-FILTERS.md: photo, name, starting size,
-// quick "Get a Sample" action. "New Arrival" is computed from the real
-// `created_at` column, never manually curated (02-DESIGN-SYSTEM.md "honest
+// Listing card per 04-PRODUCT-LISTING-FILTERS.md: white/light photo tile on
+// a dark card, gold price (only when a real `price` is set), solid blue pill
+// "Get a Sample" CTA. "New Arrival" is computed from the real `created_at`
+// column, never manually curated — no generic "Deal"/percent-off badge was
+// added since no real discount data exists (02-DESIGN-SYSTEM.md "honest
 // data only").
 export function ProductCard({ product }: ProductCardProps) {
   return (
-    <Card className="p-0">
+    <Card className="gap-0 overflow-hidden p-0">
       <Link to={`/products/${product.slug}`} className="group/link outline-none">
-        <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden bg-muted">
+        <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden bg-white">
           {product.cover_image_url && (
             <img src={product.cover_image_url} alt="" className="h-full w-full object-cover" />
           )}
           {isNewArrival(product.created_at) && (
-            <Badge className="absolute top-2 left-2">New Arrival</Badge>
+            <Badge className="absolute top-2 left-2 bg-navy text-navy-foreground">New Arrival</Badge>
           )}
         </div>
         <CardContent className="flex flex-col gap-1 pt-3 pb-3">
+          {product.price != null && (
+            <p className="font-heading text-lg font-semibold text-price">PKR {product.price.toLocaleString()}</p>
+          )}
           <h3 className="font-medium text-foreground group-hover/link:underline">{product.name}</h3>
           {product.size && <p className="text-sm text-muted-foreground">{product.size}</p>}
         </CardContent>
@@ -40,8 +45,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <CardContent className="pb-4">
         <Button
           size="sm"
-          variant="outline"
-          className="w-full"
+          className="w-full rounded-full"
           nativeButton={false}
           render={
             <a

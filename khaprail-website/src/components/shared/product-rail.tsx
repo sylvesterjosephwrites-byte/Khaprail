@@ -4,6 +4,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ProductCard } from "@/components/products/product-card"
+import { cn } from "@/lib/utils"
 import type { Product } from "@/types/product"
 
 interface ProductRailProps {
@@ -15,15 +16,34 @@ interface ProductRailProps {
   error?: string | null
   /** Return null (render nothing) instead of the empty-state copy when there's no real data yet. */
   hideWhenEmpty?: boolean
+  /** Alternating dark panel tone the rail sits in (2026-08-25 restyle) — "none" leaves the page background showing through. */
+  tone?: "navy" | "warm" | "none"
 }
 
 const SKELETON_COUNT = 4
 
+const TONE_CLASSES: Record<NonNullable<ProductRailProps["tone"]>, string> = {
+  navy: "rounded-2xl bg-panel-navy p-6 sm:p-8",
+  warm: "rounded-2xl bg-panel-warm p-6 sm:p-8",
+  none: "",
+}
+
 // Shared horizontal-scroll product carousel — Best Sellers, New Arrivals,
 // Top Picks Today, Similar Products, Explore More Products all use this so
 // the "real data or an honest empty state, never fabricated" pattern only
-// lives in one place (02-DESIGN-SYSTEM.md).
-export function ProductRail({ title, emptyCopy, viewAllTo, products, isLoading, error, hideWhenEmpty }: ProductRailProps) {
+// lives in one place (02-DESIGN-SYSTEM.md). Sits inside a slightly lighter
+// dark panel per the 2026-08-25 restyle, alternating tone between sections
+// for visual rhythm.
+export function ProductRail({
+  title,
+  emptyCopy,
+  viewAllTo,
+  products,
+  isLoading,
+  error,
+  hideWhenEmpty,
+  tone = "none",
+}: ProductRailProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const hasProducts = !isLoading && !error && products.length > 0
 
@@ -34,7 +54,7 @@ export function ProductRail({ title, emptyCopy, viewAllTo, products, isLoading, 
   }
 
   return (
-    <section>
+    <section className={cn(TONE_CLASSES[tone])}>
       <div className="mb-6 flex items-end justify-between">
         <h2 className="font-heading text-3xl font-semibold sm:text-4xl">{title}</h2>
         <div className="flex items-center gap-2">
