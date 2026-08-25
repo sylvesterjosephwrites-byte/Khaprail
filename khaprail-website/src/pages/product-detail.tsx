@@ -1,16 +1,16 @@
 import { lazy, Suspense, useState } from "react"
-import { Link, useParams, useSearchParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Gallery } from "@/components/pdp/gallery"
-import { VariantSwatches } from "@/components/pdp/variant-swatches"
-import { SpecBlock } from "@/components/pdp/spec-block"
-import { ApplicationTags } from "@/components/pdp/application-tags"
+import { AboutItemAccordion } from "@/components/pdp/about-item-accordion"
+import { CompareTable } from "@/components/pdp/compare-table"
 import { SampleRequestDialog } from "@/components/pdp/sample-request-dialog"
-import { ProductCard } from "@/components/products/product-card"
+import { ProductRail } from "@/components/shared/product-rail"
 import { useProduct } from "@/hooks/use-product"
 import { useRelatedProducts } from "@/hooks/use-related-products"
-import type { ProductVariant } from "@/types/product"
+import { useComparableProducts } from "@/hooks/use-comparable-products"
+import { useExploreProducts } from "@/hooks/use-explore-products"
 
 // @react-pdf/renderer is large (fontkit, its own layout engine) — load it
 // only when a PDP actually mounts, not as part of every route's bundle.
@@ -18,14 +18,18 @@ const DownloadSpecSheetButton = lazy(() =>
   import("@/components/shared/download-spec-sheet-button").then((m) => ({ default: m.DownloadSpecSheetButton }))
 )
 
-// /products/[slug] — product detail page (05-PDP-SPEC.md).
+// /products/[slug] — product detail page (05-PDP-SPEC.md, Store.com
+// reference pattern): single photo + one thumbnail, title + price, spec
+// table, "Get a Sample," "About This Item" accordion, "Similar Products,"
+// "Compare With Similar Items" (real-data-gated), "Explore More Products."
 export function ProductDetail() {
   const { slug } = useParams<{ slug: string }>()
   const { product, isLoading, error } = useProduct(slug)
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [manualImageUrl, setManualImageUrl] = useState<string | null>(null)
+  const [thumbnailSwapped, setThumbnailSwapped] = useState(false)
 
-  const relatedProducts = useRelatedProducts(product?.collection_id ?? null, product?.id ?? "")
+  const relatedProducts = useRelatedProducts(product?.category_id ?? null, product?.id ?? "")
+  const comparableProducts = useComparableProducts(product?.category_id ?? null, product?.id ?? "")
+  const exploreProducts = useExploreProducts(product?.id ?? "")
 
   if (isLoading) {
     return (
@@ -55,47 +59,30 @@ export function ProductDetail() {
     )
   }
 
-  const activeVariant = product.product_variants.find((v) => v.color_name === searchParams.get("color")) ?? null
-  const baseHeroUrl = product.cover_image_url ?? product.product_images[0]?.image_url ?? null
-  const displayedImageUrl = manualImageUrl ?? activeVariant?.hero_image_url ?? baseHeroUrl
-
-  const thumbnails = [
-    ...(product.cover_image_url ? [{ id: "cover", url: product.cover_image_url }] : []),
-    ...product.product_images.map((img) => ({ id: img.id, url: img.image_url })),
-  ]
-
-  function handleVariantSelect(variant: ProductVariant) {
-    setManualImageUrl(null)
-    const next = new URLSearchParams(searchParams)
-    next.set("color", variant.color_name)
-    setSearchParams(next, { replace: true })
-  }
+  const secondaryImageUrl = product.product_images[0]?.image_url ?? null
+  const heroImageUrl = thumbnailSwapped ? secondaryImageUrl : (product.cover_image_url ?? secondaryImageUrl)
+  const thumbnailImageUrl = thumbnailSwapped ? (product.cover_image_url ?? null) : secondaryImageUrl
 
   return (
     <main className="flex-1">
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2">
         <Gallery
-          heroImageUrl={displayedImageUrl}
-          thumbnails={thumbnails}
-          selectedUrl={manualImageUrl}
-          onSelect={(url) => setManualImageUrl(url)}
+          heroImageUrl={heroImageUrl}
+          thumbnailImageUrl={product.cover_image_url && secondaryImageUrl ? thumbnailImageUrl : null}
+          onSwapThumbnail={() => setThumbnailSwapped((prev) => !prev)}
         />
 
         <div className="flex flex-col gap-6">
           <div>
-            <h1 className="font-heading text-3xl">{product.name}</h1>
-            {product.description && <p className="mt-3 text-muted-foreground">{product.description}</p>}
+            <div className="flex flex-wrap items-baseline justify-between gap-3">
+              <h1 className="font-heading text-3xl">{product.name}</h1>
+              {product.price != null && (
+                <p className="font-heading text-2xl font-semibold text-primary">
+                  PKR {product.price.toLocaleString()}
+                </p>
+              )}
+            </div>
           </div>
-
-          <VariantSwatches
-            variants={product.product_variants}
-            activeVariantId={activeVariant?.id ?? null}
-            onSelect={handleVariantSelect}
-          />
-
-          <SpecBlock product={product} />
-
-          <ApplicationTags attributes={product.product_attributes} />
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <SampleRequestDialog productId={product.id} productName={product.name} />
@@ -109,19 +96,31 @@ export function ProductDetail() {
               <DownloadSpecSheetButton product={product} />
             </Suspense>
           </div>
+
+          <AboutItemAccordion product={product} />
         </div>
       </div>
 
-      {relatedProducts.products.length > 0 && (
-        <div className="mx-auto w-full max-w-6xl border-t border-border px-4 py-16 sm:px-6">
-          <h2 className="mb-8 font-heading text-3xl font-semibold sm:text-4xl">You May Also Like</h2>
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-            {relatedProducts.products.map((related) => (
-              <ProductCard key={related.id} product={related} />
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-16 border-t border-border px-4 py-16 sm:px-6">
+        <ProductRail
+          title="Similar Products"
+          emptyCopy="No other products in this category yet."
+          products={relatedProducts.products}
+          isLoading={relatedProducts.isLoading}
+          hideWhenEmpty
+        />
+
+        <CompareTable product={product} comparableProducts={comparableProducts.products} />
+
+        <ProductRail
+          title="Explore More Products"
+          emptyCopy="More products are on the way."
+          viewAllTo="/products"
+          products={exploreProducts.products}
+          isLoading={exploreProducts.isLoading}
+          hideWhenEmpty
+        />
+      </div>
     </main>
   )
 }

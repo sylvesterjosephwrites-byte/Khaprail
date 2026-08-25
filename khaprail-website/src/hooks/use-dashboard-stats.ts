@@ -10,7 +10,7 @@ interface ActivityItem {
 
 interface DashboardStats {
   productCount: number
-  collectionCount: number
+  categoryCount: number
   inquiriesLast7Days: number
   inquiriesLast30Days: number
   recentActivity: ActivityItem[]
@@ -23,7 +23,7 @@ const DAY_MS = 24 * 60 * 60 * 1000
 export function useDashboardStats(): DashboardStats {
   const [stats, setStats] = useState<Omit<DashboardStats, "isLoading">>({
     productCount: 0,
-    collectionCount: 0,
+    categoryCount: 0,
     inquiriesLast7Days: 0,
     inquiriesLast30Days: 0,
     recentActivity: [],
@@ -40,10 +40,10 @@ export function useDashboardStats(): DashboardStats {
       const sevenDaysAgo = new Date(now.getTime() - 7 * DAY_MS).toISOString()
       const thirtyDaysAgo = new Date(now.getTime() - 30 * DAY_MS).toISOString()
 
-      const [productCountRes, collectionCountRes, last7Res, last30Res, recentProductsRes, recentInquiriesRes, recentPostsRes] =
+      const [productCountRes, categoryCountRes, last7Res, last30Res, recentProductsRes, recentInquiriesRes, recentPostsRes] =
         await Promise.all([
           client.from("products").select("*", { count: "exact", head: true }),
-          client.from("collections").select("*", { count: "exact", head: true }),
+          client.from("categories").select("*", { count: "exact", head: true }),
           client.from("sample_inquiries").select("*", { count: "exact", head: true }).gte("created_at", sevenDaysAgo),
           client.from("sample_inquiries").select("*", { count: "exact", head: true }).gte("created_at", thirtyDaysAgo),
           client.from("products").select("id, name, created_at").order("created_at", { ascending: false }).limit(5),
@@ -81,7 +81,7 @@ export function useDashboardStats(): DashboardStats {
       if (cancelled) return
       setStats({
         productCount: productCountRes.count ?? 0,
-        collectionCount: collectionCountRes.count ?? 0,
+        categoryCount: categoryCountRes.count ?? 0,
         inquiriesLast7Days: last7Res.count ?? 0,
         inquiriesLast30Days: last30Res.count ?? 0,
         recentActivity: activity,

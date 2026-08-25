@@ -34,8 +34,11 @@ interface CatalogDocumentProps {
 }
 
 // "Download Catalog" (01-SITE-MAP.md /downloads, referenced by the Hero's
-// "Download Catalog" CTA) — generated from real `products`/`collections`
+// "Download Catalog" CTA) — generated from real `products`/`categories`
 // data rather than a static file, so it's never stale or fabricated.
+// (Internal `CatalogCollection`/`collections` naming here is just this PDF
+// module's own vocabulary for "a named group of products" — unrelated to
+// the removed `collections` table.)
 export function CatalogDocument({ collections }: CatalogDocumentProps) {
   return (
     <Document title="Khaprail Tiles — Full Catalog">

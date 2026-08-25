@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { SiteLayout } from "@/components/layout/site-layout"
 import { Home } from "@/pages/home"
-import { CollectionsIndex } from "@/pages/collections-index"
-import { CollectionDetail } from "@/pages/collection-detail"
+import { CategoriesIndex } from "@/pages/categories-index"
+import { CategoryDetail } from "@/pages/category-detail"
 import { ProductsListing } from "@/pages/products-listing"
 import { ProductDetail } from "@/pages/product-detail"
 import { NewArrivals } from "@/pages/new-arrivals"
@@ -17,8 +17,8 @@ import { AdminLogin } from "@/pages/admin/login"
 import { DashboardHome } from "@/pages/admin/dashboard-home"
 import { AdminProductsList } from "@/pages/admin/products-list"
 import { AdminProductEditor } from "@/pages/admin/product-editor"
-import { AdminCollectionsList } from "@/pages/admin/collections-list"
-import { AdminCollectionEditor } from "@/pages/admin/collection-editor"
+import { AdminCategoriesList } from "@/pages/admin/categories-list"
+import { AdminCategoryEditor } from "@/pages/admin/category-editor"
 import { AdminFilterTypesList } from "@/pages/admin/filter-types-list"
 import { AdminBlogList } from "@/pages/admin/blog-list"
 import { AdminBlogEditor } from "@/pages/admin/blog-editor"
@@ -35,8 +35,8 @@ function App() {
           <Route element={<SiteLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/collections" element={<CollectionsIndex />} />
-            <Route path="/collections/:slug" element={<CollectionDetail />} />
+            <Route path="/categories" element={<CategoriesIndex />} />
+            <Route path="/categories/:slug" element={<CategoryDetail />} />
             <Route path="/products" element={<ProductsListing />} />
             <Route path="/products/:slug" element={<ProductDetail />} />
             <Route path="/new-arrivals" element={<NewArrivals />} />
@@ -58,9 +58,9 @@ function App() {
               <Route path="/admin/products" element={<AdminProductsList />} />
               <Route path="/admin/products/new" element={<AdminProductEditor />} />
               <Route path="/admin/products/:id/edit" element={<AdminProductEditor />} />
-              <Route path="/admin/collections" element={<AdminCollectionsList />} />
-              <Route path="/admin/collections/new" element={<AdminCollectionEditor />} />
-              <Route path="/admin/collections/:id/edit" element={<AdminCollectionEditor />} />
+              <Route path="/admin/categories" element={<AdminCategoriesList />} />
+              <Route path="/admin/categories/new" element={<AdminCategoryEditor />} />
+              <Route path="/admin/categories/:id/edit" element={<AdminCategoryEditor />} />
               <Route path="/admin/filter-types" element={<AdminFilterTypesList />} />
               <Route path="/admin/blog" element={<AdminBlogList />} />
               <Route path="/admin/blog/new" element={<AdminBlogEditor />} />

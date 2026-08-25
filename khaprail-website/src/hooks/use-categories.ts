@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
-import type { Collection } from "@/types/collection"
+import type { Category } from "@/types/category"
 
-interface UseCollectionsResult {
-  collections: Collection[]
+interface UseCategoriesResult {
+  categories: Category[]
   isLoading: boolean
   /** Set when Supabase isn't provisioned yet, or the query itself failed. */
   error: string | null
 }
 
 /**
- * Reads the admin-editable `collections` table (see 03-MEGA-MENU-SPEC.md).
- * Never hardcode the collection list in a component — add rows in Supabase
- * instead, once the project exists.
+ * Reads the admin-editable, self-referencing `categories` table
+ * (12-CATEGORY-TAXONOMY.md) as a flat, sort_order-ordered list. Use
+ * `src/lib/category-tree.ts` to derive roots/children/ancestors from it.
+ * Never hardcode the category list in a component.
  */
-export function useCollections(): UseCollectionsResult {
-  const [collections, setCollections] = useState<Collection[]>([])
+export function useCategories(): UseCategoriesResult {
+  const [categories, setCategories] = useState<Category[]>([])
   const [isLoading, setIsLoading] = useState(() => supabase !== null)
   const [error, setError] = useState<string | null>(() =>
     supabase ? null : "Supabase project not configured yet"
@@ -27,15 +28,15 @@ export function useCollections(): UseCollectionsResult {
     let cancelled = false
 
     supabase
-      .from("collections")
-      .select("id, name, slug, cover_image_url, sort_order, is_secondary")
+      .from("categories")
+      .select("id, name, slug, parent_id, cover_image_url, sort_order, created_at")
       .order("sort_order", { ascending: true })
       .then(({ data, error: queryError }) => {
         if (cancelled) return
         if (queryError) {
           setError(queryError.message)
         } else {
-          setCollections(data ?? [])
+          setCategories(data ?? [])
         }
         setIsLoading(false)
       })
@@ -45,5 +46,5 @@ export function useCollections(): UseCollectionsResult {
     }
   }, [])
 
-  return { collections, isLoading, error }
+  return { categories, isLoading, error }
 }

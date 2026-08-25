@@ -2,28 +2,26 @@ import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import type { Product } from "@/types/product"
 
-interface UseRelatedProductsResult {
+interface UseExploreProductsResult {
   products: Product[]
   isLoading: boolean
 }
 
 const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, price, created_at"
-const RELATED_LIMIT = 4
+const EXPLORE_LIMIT = 8
 
 /**
- * "Similar Products" rail (05-PDP-SPEC.md) — other products in the same
- * category, excluding the current one.
+ * "Explore More Products" (05-PDP-SPEC.md) — a broader, cross-category
+ * discovery rail, distinct from "Similar Products" (same category only,
+ * see `use-related-products.ts`). Newest products first, excluding the
+ * current one.
  */
-export function useRelatedProducts(categoryId: string | null, excludeProductId: string): UseRelatedProductsResult {
+export function useExploreProducts(excludeProductId: string): UseExploreProductsResult {
   const [products, setProducts] = useState<Product[]>([])
-  const [isLoading, setIsLoading] = useState(() => supabase !== null && !!categoryId)
+  const [isLoading, setIsLoading] = useState(() => supabase !== null)
 
   useEffect(() => {
-    if (!supabase || !categoryId) {
-      setProducts([])
-      setIsLoading(false)
-      return
-    }
+    if (!supabase) return
 
     let cancelled = false
     setIsLoading(true)
@@ -31,10 +29,9 @@ export function useRelatedProducts(categoryId: string | null, excludeProductId: 
     supabase
       .from("products")
       .select(PRODUCT_COLUMNS)
-      .eq("category_id", categoryId)
       .neq("id", excludeProductId)
       .order("created_at", { ascending: false })
-      .limit(RELATED_LIMIT)
+      .limit(EXPLORE_LIMIT)
       .then(({ data, error }) => {
         if (cancelled) return
         if (!error) setProducts(data ?? [])
@@ -44,7 +41,7 @@ export function useRelatedProducts(categoryId: string | null, excludeProductId: 
     return () => {
       cancelled = true
     }
-  }, [categoryId, excludeProductId])
+  }, [excludeProductId])
 
   return { products, isLoading }
 }

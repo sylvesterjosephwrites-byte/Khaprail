@@ -3,7 +3,7 @@ import { ProductCard } from "@/components/products/product-card"
 import { useNewArrivals } from "@/hooks/use-new-arrivals"
 
 // /new-arrivals (01-SITE-MAP.md) — real `created_at`, newest first, same
-// honest-data source as the homepage rail (catalog-highlights.tsx).
+// honest-data source as the homepage rail (10-HOMEPAGE-SPEC.md).
 export function NewArrivals() {
   const { products, isLoading, error } = useNewArrivals()
 

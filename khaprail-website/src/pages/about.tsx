@@ -26,8 +26,8 @@ export function About() {
         <p className="text-lg text-muted-foreground">
           Our range covers Khaprail Roof Tiles, Multani Tiles, Terracotta Floor Tiles, Wall Tiles, and Outdoor
           Tiles, all fired from local clay in Pakistan.{" "}
-          <Link to="/collections" className="text-primary underline-offset-4 hover:underline">
-            Browse our collections
+          <Link to="/categories" className="text-primary underline-offset-4 hover:underline">
+            Browse our categories
           </Link>{" "}
           or get in touch on WhatsApp for a sample.
         </p>

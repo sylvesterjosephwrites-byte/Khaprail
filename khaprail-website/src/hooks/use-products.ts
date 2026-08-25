@@ -11,15 +11,16 @@ interface UseProductsResult {
   error: string | null
 }
 
-const PRODUCT_COLUMNS = "id, name, slug, collection_id, size, cover_image_url, is_featured, created_at"
+const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, price, created_at"
 
 /**
  * Reads the `products` table, applying AND-across-filter-types /
  * OR-within-a-filter-type semantics against `product_attributes`
  * (04-PRODUCT-LISTING-FILTERS.md). With no active filters, returns every
- * product sorted per `sort`.
+ * product sorted per `sort`. Pass `categoryId` to scope to one category
+ * (11-CATEGORY-LISTING-SPEC.md's listing template), exact match only.
  */
-export function useProducts(filters: ActiveFilters, sort: SortOption): UseProductsResult {
+export function useProducts(filters: ActiveFilters, sort: SortOption, categoryId?: string | null): UseProductsResult {
   const [products, setProducts] = useState<Product[]>([])
   const [facetCounts, setFacetCounts] = useState<Record<string, Record<string, number>>>({})
   const [isLoading, setIsLoading] = useState(() => supabase !== null)
@@ -73,6 +74,9 @@ export function useProducts(filters: ActiveFilters, sort: SortOption): UseProduc
       }
 
       let query = client.from("products").select(PRODUCT_COLUMNS)
+      if (categoryId) {
+        query = query.eq("category_id", categoryId)
+      }
       if (matchingIds !== null) {
         query = query.in("id", [...matchingIds])
       }
@@ -120,7 +124,7 @@ export function useProducts(filters: ActiveFilters, sort: SortOption): UseProduc
     return () => {
       cancelled = true
     }
-  }, [filtersKey, sort])
+  }, [filtersKey, sort, categoryId])
 
   return { products, facetCounts, isLoading, error }
 }

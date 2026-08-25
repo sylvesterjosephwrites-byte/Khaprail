@@ -20,17 +20,22 @@ const styles = StyleSheet.create({
 })
 
 // The fields a spec sheet actually needs — deliberately narrower than the
-// full PDP `ProductDetail` type (no images/variants/attributes) so the
-// Downloads page (batch 7) can generate one from a lightweight product list
-// query, not the PDP's full nested fetch.
+// full PDP `ProductDetail` type (no images/attributes) so the Downloads page
+// can generate one from a lightweight product list query, not the PDP's
+// full nested fetch.
 export interface SpecSheetProduct {
   name: string
   slug: string
   size: string | null
   thickness: string | null
   finish: string | null
-  shade_variation: string | null
   country_of_origin: string
+  brand: string | null
+  merchant: string | null
+  sku: string | null
+  availability: string | null
+  manufacturer: string | null
+  category_name: string | null
   description: string | null
 }
 
@@ -41,10 +46,15 @@ interface SpecSheetDocumentProps {
 // Branded downloadable spec sheet (05-PDP-SPEC.md).
 export function SpecSheetDocument({ product }: SpecSheetDocumentProps) {
   const rows: [string, string | null][] = [
+    ["Brand", product.brand],
+    ["Merchant", product.merchant],
+    ["Category", product.category_name],
+    ["Availability", product.availability],
+    ["SKU", product.sku],
+    ["Manufacturer", product.manufacturer],
     ["Size", product.size],
     ["Thickness", product.thickness],
     ["Finish", product.finish],
-    ["Shade Variation", product.shade_variation],
     ["Country of Origin", product.country_of_origin],
   ]
   const visibleRows = rows.filter(([, value]) => !!value)

@@ -8,7 +8,7 @@ interface UseAdminProductsResult {
   error: string | null
 }
 
-const COLUMNS = "id, name, slug, collection_id, size, cover_image_url, is_featured, created_at"
+const COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, price, created_at"
 
 /** /admin/products list — requires the authenticated admin session (batch 9 RLS). */
 export function useAdminProducts(): UseAdminProductsResult {

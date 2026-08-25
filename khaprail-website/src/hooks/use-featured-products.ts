@@ -8,15 +8,15 @@ interface UseFeaturedProductsResult {
   error: string | null
 }
 
-const PRODUCT_COLUMNS = "id, name, slug, collection_id, size, cover_image_url, is_featured, created_at"
+const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, price, created_at"
 
 /**
- * "Best Sellers" (homepage + /best-sellers) — real orders/inquiry volume
- * isn't rich enough yet to rank by, so this reads the admin-toggled
- * `is_featured` flag instead of ever fabricating a ranking
- * (02-DESIGN-SYSTEM.md "honest data only").
+ * "Top Picks Today" (category listing pages) — admin-toggled `is_featured`
+ * flag. Real editorial curation, not a fabricated ranking, but no longer
+ * used for the homepage's "Best Sellers" rail — see `use-best-sellers.ts`,
+ * which ranks by real `sample_inquiries` volume instead.
  */
-export function useFeaturedProducts(limit?: number): UseFeaturedProductsResult {
+export function useFeaturedProducts(limit?: number, categoryId?: string | null): UseFeaturedProductsResult {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(() => supabase !== null)
   const [error, setError] = useState<string | null>(() =>
@@ -32,6 +32,7 @@ export function useFeaturedProducts(limit?: number): UseFeaturedProductsResult {
       .select(PRODUCT_COLUMNS)
       .eq("is_featured", true)
       .order("created_at", { ascending: false })
+    if (categoryId) query = query.eq("category_id", categoryId)
     if (limit) query = query.limit(limit)
 
     query.then(({ data, error: queryError }) => {
@@ -47,7 +48,7 @@ export function useFeaturedProducts(limit?: number): UseFeaturedProductsResult {
     return () => {
       cancelled = true
     }
-  }, [limit])
+  }, [limit, categoryId])
 
   return { products, isLoading, error }
 }

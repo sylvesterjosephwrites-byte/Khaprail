@@ -4,7 +4,7 @@ import type { SpecSheetProduct } from "@/lib/pdf/spec-sheet-document"
 
 export interface DownloadableProduct extends SpecSheetProduct {
   id: string
-  collection_id: string | null
+  category_id: string | null
 }
 
 interface UseDownloadableProductsResult {
@@ -13,7 +13,7 @@ interface UseDownloadableProductsResult {
 }
 
 const COLUMNS =
-  "id, name, slug, collection_id, size, thickness, finish, shade_variation, country_of_origin, description"
+  "id, name, slug, category_id, size, thickness, finish, country_of_origin, brand, merchant, sku, availability, manufacturer, description, categories ( name )"
 
 /** Products page for /downloads (01-SITE-MAP.md) — spec sheets + full catalog. */
 export function useDownloadableProducts(): UseDownloadableProductsResult {
@@ -31,7 +31,12 @@ export function useDownloadableProducts(): UseDownloadableProductsResult {
       .order("name", { ascending: true })
       .then(({ data, error }) => {
         if (cancelled) return
-        if (!error) setProducts(data ?? [])
+        if (!error) {
+          const rows = (data ?? []) as unknown as (DownloadableProduct & { categories: { name: string } | null })[]
+          setProducts(
+            rows.map(({ categories, ...rest }) => ({ ...rest, category_name: categories?.name ?? null }))
+          )
+        }
         setIsLoading(false)
       })
 

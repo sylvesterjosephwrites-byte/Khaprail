@@ -19,16 +19,18 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { NAV_LINKS } from "@/lib/nav-links"
 import { buildWhatsAppUrl, DEFAULT_WHATSAPP_MESSAGE } from "@/lib/whatsapp"
-import type { Collection } from "@/types/collection"
+import { getRootCategories, getCategoryChildren } from "@/lib/category-tree"
+import type { Category } from "@/types/category"
 
 interface MobileNavProps {
-  collections: Collection[]
+  categories: Category[]
   isLoading: boolean
   error: string | null
 }
 
-export function MobileNav({ collections, isLoading, error }: MobileNavProps) {
+export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
   const [open, setOpen] = useState(false)
+  const roots = getRootCategories(categories)
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -44,8 +46,8 @@ export function MobileNav({ collections, isLoading, error }: MobileNavProps) {
         </SheetHeader>
         <nav className="flex flex-col gap-1 overflow-y-auto px-4 pb-4">
           <Accordion>
-            <AccordionItem value="collections">
-              <AccordionTrigger>Our Collection</AccordionTrigger>
+            <AccordionItem value="categories">
+              <AccordionTrigger>Categories</AccordionTrigger>
               <AccordionContent>
                 {isLoading ? (
                   <div className="flex flex-col gap-2">
@@ -53,34 +55,56 @@ export function MobileNav({ collections, isLoading, error }: MobileNavProps) {
                       <Skeleton key={i} className="h-8 w-full" />
                     ))}
                   </div>
-                ) : error || collections.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Collections coming soon.</p>
+                ) : error || roots.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Categories coming soon.</p>
                 ) : (
                   <ul className="flex flex-col gap-1">
-                    {collections.map((collection) => (
-                      <li key={collection.id}>
-                        <SheetClose
-                          nativeButton={false}
-                          render={
-                            <Link
-                              to={`/collections/${collection.slug}`}
-                              className="flex items-center gap-3 rounded-lg py-2 text-sm hover:bg-muted"
-                            />
-                          }
-                        >
-                          <span className="h-8 w-8 shrink-0 overflow-hidden rounded bg-muted">
-                            {collection.cover_image_url && (
-                              <img
-                                src={collection.cover_image_url}
-                                alt=""
-                                className="h-full w-full object-cover"
+                    {roots.map((category) => {
+                      const children = getCategoryChildren(categories, category.id)
+                      return (
+                        <li key={category.id}>
+                          <SheetClose
+                            nativeButton={false}
+                            render={
+                              <Link
+                                to={`/categories/${category.slug}`}
+                                className="flex items-center gap-3 rounded-lg py-2 text-sm hover:bg-muted"
                               />
-                            )}
-                          </span>
-                          {collection.name}
-                        </SheetClose>
-                      </li>
-                    ))}
+                            }
+                          >
+                            <span className="h-8 w-8 shrink-0 overflow-hidden rounded bg-muted">
+                              {category.cover_image_url && (
+                                <img
+                                  src={category.cover_image_url}
+                                  alt=""
+                                  className="h-full w-full object-cover"
+                                />
+                              )}
+                            </span>
+                            {category.name}
+                          </SheetClose>
+                          {children.length > 0 && (
+                            <ul className="ml-11 flex flex-col gap-1 border-l border-border pl-3">
+                              {children.map((child) => (
+                                <li key={child.id}>
+                                  <SheetClose
+                                    nativeButton={false}
+                                    render={
+                                      <Link
+                                        to={`/categories/${child.slug}`}
+                                        className="flex items-center rounded-lg py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+                                      />
+                                    }
+                                  >
+                                    {child.name}
+                                  </SheetClose>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      )
+                    })}
                   </ul>
                 )}
               </AccordionContent>

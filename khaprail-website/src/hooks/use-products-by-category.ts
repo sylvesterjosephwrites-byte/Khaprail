@@ -2,20 +2,20 @@ import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
 import type { Product } from "@/types/product"
 
-interface UseProductsByCollectionResult {
+interface UseProductsByCategoryResult {
   products: Product[]
   isLoading: boolean
 }
 
-const PRODUCT_COLUMNS = "id, name, slug, collection_id, size, cover_image_url, is_featured, created_at"
+const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, price, created_at"
 
-/** /collections/[slug] — every product in a collection (01-SITE-MAP.md). */
-export function useProductsByCollection(collectionId: string | null): UseProductsByCollectionResult {
+/** /categories/[slug] — every product in a category (exact match, not recursive into children). */
+export function useProductsByCategory(categoryId: string | null): UseProductsByCategoryResult {
   const [products, setProducts] = useState<Product[]>([])
-  const [isLoading, setIsLoading] = useState(() => supabase !== null && !!collectionId)
+  const [isLoading, setIsLoading] = useState(() => supabase !== null && !!categoryId)
 
   useEffect(() => {
-    if (!supabase || !collectionId) {
+    if (!supabase || !categoryId) {
       setProducts([])
       setIsLoading(false)
       return
@@ -27,7 +27,7 @@ export function useProductsByCollection(collectionId: string | null): UseProduct
     supabase
       .from("products")
       .select(PRODUCT_COLUMNS)
-      .eq("collection_id", collectionId)
+      .eq("category_id", categoryId)
       .order("name", { ascending: true })
       .then(({ data, error }) => {
         if (cancelled) return
@@ -38,7 +38,7 @@ export function useProductsByCollection(collectionId: string | null): UseProduct
     return () => {
       cancelled = true
     }
-  }, [collectionId])
+  }, [categoryId])
 
   return { products, isLoading }
 }

@@ -10,17 +10,17 @@ interface UseProductResult {
 }
 
 const PRODUCT_DETAIL_COLUMNS = `
-  id, name, slug, collection_id, description, size, thickness, finish,
-  shade_variation, country_of_origin, cover_image_url, is_featured, created_at,
+  id, name, slug, category_id, description, size, thickness, finish,
+  country_of_origin, cover_image_url, is_featured, created_at,
+  brand, merchant, sku, availability, manufacturer, price,
+  categories ( name ),
   product_images ( id, image_url, sort_order ),
-  product_variants ( id, color_name, swatch_image_url, hero_image_url, sort_order ),
   product_attributes ( id, attribute_type, value )
 `
 
 /**
- * Reads a single `products` row by slug, embedding its images/variants/
- * attributes in one request via PostgREST's FK-based resource embedding
- * (05-PDP-SPEC.md).
+ * Reads a single `products` row by slug, embedding its images/attributes in
+ * one request via PostgREST's FK-based resource embedding (05-PDP-SPEC.md).
  */
 export function useProduct(slug: string | undefined): UseProductResult {
   const [product, setProduct] = useState<ProductDetail | null>(null)
@@ -41,7 +41,6 @@ export function useProduct(slug: string | undefined): UseProductResult {
       .select(PRODUCT_DETAIL_COLUMNS)
       .eq("slug", slug)
       .order("sort_order", { referencedTable: "product_images", ascending: true })
-      .order("sort_order", { referencedTable: "product_variants", ascending: true })
       .maybeSingle()
       .then(({ data, error: queryError }) => {
         if (cancelled) return
@@ -50,7 +49,8 @@ export function useProduct(slug: string | undefined): UseProductResult {
         } else if (!data) {
           setError("Product not found")
         } else {
-          setProduct(data as unknown as ProductDetail)
+          const { categories, ...rest } = data as unknown as ProductDetail & { categories: { name: string } | null }
+          setProduct({ ...rest, category_name: categories?.name ?? null })
         }
         setIsLoading(false)
       })

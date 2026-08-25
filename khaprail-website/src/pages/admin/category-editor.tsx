@@ -2,50 +2,62 @@ import { useEffect, useState, type FormEvent } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useCategories } from "@/hooks/use-categories"
 import { supabase } from "@/lib/supabase"
-import { saveCollection, type CollectionFormValues } from "@/lib/collections-admin"
+import { saveCategory, type CategoryFormValues } from "@/lib/categories-admin"
+import { flattenCategoryTree } from "@/lib/category-tree"
 import { getErrorMessage, slugify } from "@/lib/utils"
-import type { Collection } from "@/types/collection"
+import type { Category } from "@/types/category"
 
-const EMPTY_VALUES: CollectionFormValues = {
+const NO_PARENT = "__none__"
+
+const EMPTY_VALUES: CategoryFormValues = {
   name: "",
   slug: "",
+  parent_id: null,
   cover_image_url: null,
   sort_order: 0,
-  is_secondary: false,
 }
 
-// /admin/collections/new and /admin/collections/:id/edit.
-export function AdminCollectionEditor() {
+// /admin/categories/new and /admin/categories/:id/edit.
+export function AdminCategoryEditor() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [values, setValues] = useState<CollectionFormValues>(EMPTY_VALUES)
-  const [isLoading, setIsLoading] = useState(!!id)
+  const { categories, isLoading: categoriesLoading } = useCategories()
+  const [values, setValues] = useState<CategoryFormValues>(EMPTY_VALUES)
+  const [isLoadingCategory, setIsLoadingCategory] = useState(!!id)
+  const isLoading = isLoadingCategory || categoriesLoading
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!id || !supabase) {
-      setIsLoading(false)
+      setIsLoadingCategory(false)
       return
     }
     supabase
-      .from("collections")
-      .select("id, name, slug, cover_image_url, sort_order, is_secondary")
+      .from("categories")
+      .select("id, name, slug, parent_id, cover_image_url, sort_order, created_at")
       .eq("id", id)
       .maybeSingle()
       .then(({ data }) => {
         if (data) {
-          const { id: _id, ...formValues } = data as Collection
+          const { id: _id, created_at: _createdAt, ...formValues } = data as Category
           setValues(formValues)
         }
-        setIsLoading(false)
+        setIsLoadingCategory(false)
       })
   }, [id])
 
-  function updateField<K extends keyof CollectionFormValues>(key: K, value: CollectionFormValues[K]) {
+  function updateField<K extends keyof CategoryFormValues>(key: K, value: CategoryFormValues[K]) {
     setValues((prev) => ({ ...prev, [key]: value }))
   }
 
@@ -54,10 +66,10 @@ export function AdminCollectionEditor() {
     setIsSaving(true)
     setSaveError(null)
     try {
-      await saveCollection(values, id ?? null)
-      navigate("/admin/collections")
+      await saveCategory(values, id ?? null)
+      navigate("/admin/categories")
     } catch (err) {
-      setSaveError(getErrorMessage(err, "Failed to save collection"))
+      setSaveError(getErrorMessage(err, "Failed to save category"))
     } finally {
       setIsSaving(false)
     }
@@ -71,12 +83,14 @@ export function AdminCollectionEditor() {
     )
   }
 
+  const parentOptions = flattenCategoryTree(categories).filter((row) => row.category.id !== id)
+
   return (
     <main className="mx-auto w-full max-w-lg px-4 py-16 sm:px-6">
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="font-heading text-3xl">{id ? "Edit Collection" : "New Collection"}</h1>
-        <Link to="/admin/collections" className="text-sm text-muted-foreground hover:underline">
-          Back to all collections
+        <h1 className="font-heading text-3xl">{id ? "Edit Category" : "New Category"}</h1>
+        <Link to="/admin/categories" className="text-sm text-muted-foreground hover:underline">
+          Back to all categories
         </Link>
       </div>
 
@@ -95,6 +109,30 @@ export function AdminCollectionEditor() {
           <Input required value={values.slug} onChange={(e) => updateField("slug", e.target.value)} />
         </div>
         <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium">Parent Category</label>
+          <Select
+            value={values.parent_id ?? NO_PARENT}
+            onValueChange={(v) => updateField("parent_id", v === NO_PARENT ? null : v)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="None (top-level category)">
+                {(value: string) =>
+                  value === NO_PARENT ? "None (top-level category)" : categories.find((c) => c.id === value)?.name
+                }
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={NO_PARENT}>None (top-level category)</SelectItem>
+              {parentOptions.map(({ category, depth }) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {"— ".repeat(depth)}
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium">Cover Image URL</label>
           <Input
             value={values.cover_image_url ?? ""}
@@ -109,13 +147,6 @@ export function AdminCollectionEditor() {
             onChange={(e) => updateField("sort_order", Number(e.target.value))}
           />
         </div>
-        <label className="flex items-center gap-2 text-sm">
-          <Checkbox
-            checked={values.is_secondary}
-            onCheckedChange={(checked) => updateField("is_secondary", checked === true)}
-          />
-          Secondary collection (shown in the smaller "Also from Khaprail" row)
-        </label>
 
         {saveError && (
           <p className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
@@ -124,7 +155,7 @@ export function AdminCollectionEditor() {
         )}
 
         <Button type="submit" className="w-fit" disabled={isSaving}>
-          {isSaving ? "Saving..." : "Save Collection"}
+          {isSaving ? "Saving..." : "Save Category"}
         </Button>
       </form>
     </main>

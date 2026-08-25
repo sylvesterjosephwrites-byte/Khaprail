@@ -1,5 +1,5 @@
-// Flat nav items from 01-SITE-MAP.md, excluding "Collections" which is its
-// own mega-menu (see collections-mega-menu.tsx) rather than a plain link.
+// Flat nav items from 01-SITE-MAP.md, excluding "Categories" which is its
+// own mega-menu (see categories-mega-menu.tsx) rather than a plain link.
 export const NAV_LINKS = [
   { label: "Home", to: "/" },
   { label: "Products", to: "/products" },

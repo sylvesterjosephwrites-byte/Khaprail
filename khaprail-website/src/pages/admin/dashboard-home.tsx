@@ -9,7 +9,7 @@ export function DashboardHome() {
 
   const cards = [
     { label: "Products", value: stats.productCount },
-    { label: "Collections", value: stats.collectionCount },
+    { label: "Categories", value: stats.categoryCount },
     { label: "Inquiries (7 days)", value: stats.inquiriesLast7Days },
     { label: "Inquiries (30 days)", value: stats.inquiriesLast30Days },
   ]

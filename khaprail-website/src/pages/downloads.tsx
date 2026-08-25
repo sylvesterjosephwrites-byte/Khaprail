@@ -1,9 +1,9 @@
 import { lazy, Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useCollections } from "@/hooks/use-collections"
+import { useCategories } from "@/hooks/use-categories"
 import { useDownloadableProducts } from "@/hooks/use-downloadable-products"
-import { buildCatalogCollections } from "@/lib/build-catalog-collections"
+import { buildCatalogCategories } from "@/lib/build-catalog-categories"
 
 // @react-pdf/renderer is large — only load it once a visitor is actually on
 // this page (same reasoning as the PDP's lazy DownloadSpecSheetButton).
@@ -16,14 +16,14 @@ const DownloadSpecSheetButton = lazy(() =>
 
 // /downloads (01-SITE-MAP.md) — the Hero's "Download Catalog" CTA points
 // here. Both the full catalog and every spec sheet are generated live from
-// real `products`/`collections` data (@react-pdf/renderer), never a static
+// real `products`/`categories` data (@react-pdf/renderer), never a static
 // file, so there's nothing to go stale.
 export function Downloads() {
-  const { collections, isLoading: collectionsLoading } = useCollections()
+  const { categories, isLoading: categoriesLoading } = useCategories()
   const { products, isLoading: productsLoading } = useDownloadableProducts()
-  const isLoading = collectionsLoading || productsLoading
+  const isLoading = categoriesLoading || productsLoading
 
-  const catalogCollections = buildCatalogCollections(products, collections)
+  const catalogCollections = buildCatalogCategories(products, categories)
 
   return (
     <main className="flex-1">

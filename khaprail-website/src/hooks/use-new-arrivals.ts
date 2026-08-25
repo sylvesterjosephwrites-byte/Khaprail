@@ -8,7 +8,7 @@ interface UseNewArrivalsResult {
   error: string | null
 }
 
-const PRODUCT_COLUMNS = "id, name, slug, collection_id, size, cover_image_url, is_featured, created_at"
+const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, price, created_at"
 
 /** "New Arrivals" (homepage + /new-arrivals) — real `created_at`, newest first. */
 export function useNewArrivals(limit?: number): UseNewArrivalsResult {

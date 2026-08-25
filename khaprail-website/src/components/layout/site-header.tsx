@@ -7,10 +7,10 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu"
 import { Button } from "@/components/ui/button"
-import { CollectionsMegaMenu } from "@/components/nav/collections-mega-menu"
+import { CategoriesMegaMenu } from "@/components/nav/categories-mega-menu"
 import { MobileNav } from "@/components/nav/mobile-nav"
 import { NAV_LINKS } from "@/lib/nav-links"
-import { useCollections } from "@/hooks/use-collections"
+import { useCategories } from "@/hooks/use-categories"
 import { buildWhatsAppUrl, DEFAULT_WHATSAPP_MESSAGE } from "@/lib/whatsapp"
 import { cn } from "@/lib/utils"
 
@@ -21,7 +21,7 @@ const NAV_ITEM_CLASS =
   "font-heading text-[0.95rem] font-semibold text-foreground hover:bg-primary hover:text-primary-foreground data-active:bg-primary data-active:text-primary-foreground data-popup-open:bg-primary data-popup-open:text-primary-foreground data-open:bg-primary data-open:text-primary-foreground"
 
 export function SiteHeader() {
-  const { collections, isLoading, error } = useCollections()
+  const { categories, isLoading, error } = useCategories()
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export function SiteHeader() {
 
         <NavigationMenu className="hidden max-w-none flex-1 justify-center lg:flex">
           <NavigationMenuList className="gap-1">
-            <CollectionsMegaMenu collections={collections} isLoading={isLoading} error={error} triggerClassName={NAV_ITEM_CLASS} />
+            <CategoriesMegaMenu categories={categories} isLoading={isLoading} error={error} triggerClassName={NAV_ITEM_CLASS} />
             {NAV_LINKS.filter((link) => link.label !== "Home").map((link) => (
               <NavigationMenuItem key={link.to}>
                 <NavigationMenuLink render={<Link to={link.to} />} className={NAV_ITEM_CLASS}>
@@ -71,7 +71,7 @@ export function SiteHeader() {
           >
             Get a Sample
           </Button>
-          <MobileNav collections={collections} isLoading={isLoading} error={error} />
+          <MobileNav categories={categories} isLoading={isLoading} error={error} />
         </div>
       </div>
     </header>

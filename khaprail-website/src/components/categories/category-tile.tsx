@@ -1,19 +1,19 @@
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
-import type { Collection } from "@/types/collection"
+import type { Category } from "@/types/category"
 
-interface CollectionTileProps {
-  collection: Collection
+interface CategoryTileProps {
+  category: Category
   compact?: boolean
 }
 
 /**
- * Visual body of a collection card (image + label) with no link semantics of
+ * Visual body of a category card (image + label) with no link semantics of
  * its own — callers (mega-menu, homepage grid) supply the interactive
  * wrapper so this stays reusable in both a NavigationMenuLink and a plain
  * router Link.
  */
-export function CollectionTile({ collection, compact }: CollectionTileProps) {
+export function CategoryTile({ category, compact }: CategoryTileProps) {
   return (
     <>
       <motion.span
@@ -24,16 +24,16 @@ export function CollectionTile({ collection, compact }: CollectionTileProps) {
           compact && "aspect-square"
         )}
       >
-        {collection.cover_image_url && (
+        {category.cover_image_url && (
           <img
-            src={collection.cover_image_url}
+            src={category.cover_image_url}
             alt=""
             className="h-full w-full object-cover"
           />
         )}
       </motion.span>
       <span className={cn("font-medium text-foreground", compact ? "text-xs" : "text-sm")}>
-        {collection.name}
+        {category.name}
       </span>
     </>
   )

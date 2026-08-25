@@ -1,28 +1,28 @@
 import { Link } from "react-router-dom"
 import { NavigationMenuLink } from "@/components/ui/navigation-menu"
-import { CollectionTile } from "@/components/collections/collection-tile"
-import type { Collection } from "@/types/collection"
+import { CategoryTile } from "@/components/categories/category-tile"
+import type { Category } from "@/types/category"
 
-interface CollectionCardProps {
-  collection: Collection
+interface CategoryCardProps {
+  category: Category
   cardRef: (el: HTMLAnchorElement | null) => void
   onKeyDown: (event: React.KeyboardEvent) => void
   compact?: boolean
 }
 
-export function CollectionCard({ collection, cardRef, onKeyDown, compact }: CollectionCardProps) {
+export function CategoryCard({ category, cardRef, onKeyDown, compact }: CategoryCardProps) {
   return (
     <NavigationMenuLink
       render={
         <Link
           ref={cardRef}
-          to={`/collections/${collection.slug}`}
+          to={`/categories/${category.slug}`}
           onKeyDown={onKeyDown}
           className="group/card flex flex-col items-center gap-2 rounded-lg p-2 text-center outline-none"
         />
       }
     >
-      <CollectionTile collection={collection} compact={compact} />
+      <CategoryTile category={category} compact={compact} />
     </NavigationMenuLink>
   )
 }
