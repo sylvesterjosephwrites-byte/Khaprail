@@ -4,6 +4,7 @@ import { FeatureRow } from "@/components/home/feature-row"
 import { BestSellersSection } from "@/components/home/best-sellers-section"
 import { Heritage } from "@/components/home/heritage"
 import { TrendingCategoriesGrid } from "@/components/home/trending-categories-grid"
+import { CategoryShowcase } from "@/components/home/category-showcase"
 import { NewArrivalsSection } from "@/components/home/new-arrivals-section"
 import { VideosSection } from "@/components/home/videos-section"
 import { DownloadCta } from "@/components/home/download-cta"
@@ -14,6 +15,9 @@ import { DownloadCta } from "@/components/home/download-cta"
 // Videos/Download CTA aren't in that target order but are kept (moved to
 // the end) rather than deleted — both are real, already-built,
 // honest-data-backed sections; see 00-PROGRESS.md for this adaptation.
+// Category Showcase (warm-panel 3-photo section, distinct from the earlier
+// 3-image feature row) was added after Trending Categories per its own
+// request — see 00-PROGRESS.md.
 export function Home() {
   return (
     <main className="flex-1">
@@ -23,6 +27,7 @@ export function Home() {
       <BestSellersSection />
       <Heritage />
       <TrendingCategoriesGrid />
+      <CategoryShowcase />
       <NewArrivalsSection />
       <VideosSection />
       <DownloadCta />
