@@ -129,7 +129,8 @@ export function CategoryDetail() {
             products={topPicks.products}
             isLoading={topPicks.isLoading}
             hideWhenEmpty
-            tone="navy"
+            minCount={3}
+            tone="warm"
           />
         </div>
 
