@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useRef, type ReactNode } from "react"
 import { Link } from "react-router-dom"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -25,6 +25,10 @@ interface ProductRailProps {
   minCount?: number
   /** Alternating dark panel tone the rail sits in (2026-08-25 restyle) — "none" leaves the page background showing through. */
   tone?: "navy" | "warm" | "none"
+  /** Title alignment — "center" for panels like Best Sellers that put the tab row underneath (default "left"). */
+  align?: "left" | "center"
+  /** Optional row rendered directly under the title (e.g. Best Sellers' category tabs) — opt-in per usage, not part of the shared header layout otherwise. */
+  tabs?: ReactNode
 }
 
 const SKELETON_COUNT = 4
@@ -60,6 +64,8 @@ export function ProductRail({
   hideWhenEmpty,
   minCount = 1,
   tone = "none",
+  align = "left",
+  tabs,
 }: ProductRailProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const hasProducts = !isLoading && !error && products.length >= minCount
@@ -72,9 +78,12 @@ export function ProductRail({
 
   return (
     <section className={cn(TONE_CLASSES[tone])}>
-      <div className="mb-6 flex items-end justify-between">
-        <h2 className="font-heading text-3xl font-semibold text-foreground sm:text-4xl">{title}</h2>
-        <div className="flex items-center gap-2">
+      <div className={cn("mb-6 flex items-start justify-between gap-4", align === "center" && "relative")}>
+        <div className={cn("flex flex-1 flex-col gap-4", align === "center" && "items-center text-center")}>
+          <h2 className="font-heading text-3xl font-semibold text-foreground sm:text-4xl">{title}</h2>
+          {tabs}
+        </div>
+        <div className={cn("flex items-center gap-2", align === "center" && "absolute top-0 right-0")}>
           {hasProducts && viewAllTo && (
             <Link to={viewAllTo} className="text-sm font-medium text-primary hover:underline">
               View All

@@ -24,6 +24,12 @@ export function getCategoryAncestors(categories: Category[], categoryId: string)
   return ancestors
 }
 
+/** The top-level category a given category rolls up to (itself, if it's already a root) — for grouping products assigned to subcategories under a root-level tab/filter. */
+export function getRootCategoryId(categories: Category[], categoryId: string): string {
+  const ancestors = getCategoryAncestors(categories, categoryId)
+  return ancestors.length > 0 ? ancestors[0].id : categoryId
+}
+
 export interface CategoryTreeRow {
   category: Category
   depth: number

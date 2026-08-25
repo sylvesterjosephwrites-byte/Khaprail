@@ -14,8 +14,10 @@ const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_
  * "Best Sellers" (homepage + /best-sellers) — ranked by real
  * `sample_inquiries` volume per product (10-HOMEPAGE-SPEC.md requires this
  * be backed by real inquiry/order data, never a manually-curated flag).
- * `sample_inquiries` is a small lead-gen table, so counting client-side
- * over the whole table is proportionate — no RPC/view needed at this scale.
+ * Reads the `product_inquiry_counts` view (aggregated counts only — no
+ * name/phone/message) rather than the raw `sample_inquiries` table, since
+ * that table is intentionally not public-readable (RLS: anon can only
+ * insert, only `authenticated` admins can read individual inquiries).
  */
 export function useBestSellers(limit?: number): UseBestSellersResult {
   const [products, setProducts] = useState<Product[]>([])
@@ -30,27 +32,21 @@ export function useBestSellers(limit?: number): UseBestSellersResult {
     let cancelled = false
 
     async function run() {
-      const { data: inquiries, error: inquiryError } = await client
-        .from("sample_inquiries")
-        .select("product_id")
-        .not("product_id", "is", null)
+      const { data: counts, error: countError } = await client
+        .from("product_inquiry_counts")
+        .select("product_id, inquiry_count")
 
       if (cancelled) return
-      if (inquiryError) {
-        setError(inquiryError.message)
+      if (countError) {
+        setError(countError.message)
         setIsLoading(false)
         return
       }
 
-      const counts = new Map<string, number>()
-      for (const row of inquiries ?? []) {
-        if (!row.product_id) continue
-        counts.set(row.product_id, (counts.get(row.product_id) ?? 0) + 1)
-      }
-
-      const allRankedIds = Array.from(counts.entries())
-        .sort((a, b) => b[1] - a[1])
-        .map(([id]) => id)
+      const allRankedIds = (counts ?? [])
+        .slice()
+        .sort((a, b) => b.inquiry_count - a.inquiry_count)
+        .map((row) => row.product_id as string)
       const rankedIds = limit ? allRankedIds.slice(0, limit) : allRankedIds
 
       if (rankedIds.length === 0) {
