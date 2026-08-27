@@ -49,7 +49,7 @@ export function CategoryIconRail({ categories, isLoading }: CategoryIconRailProp
         <ChevronLeftIcon className="size-4" />
         <span className="sr-only">Scroll left</span>
       </Button>
-      <div ref={scrollRef} className="scrollbar-hide flex flex-1 snap-x gap-6 overflow-x-auto py-1">
+      <div ref={scrollRef} className="scrollbar-fade flex flex-1 snap-x gap-6 overflow-x-auto py-1">
         {categories.map((category, index) => (
           <Link
             key={category.id}

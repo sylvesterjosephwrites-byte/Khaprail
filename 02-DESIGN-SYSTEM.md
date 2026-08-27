@@ -45,7 +45,7 @@ Storefront text read too small/thin, so every prominent tier was bumped one Tail
 | Section `<h2>` headings (rail titles, CTA banner, FAQ, "Explore Our Range") | `text-3xl sm:text-4xl` | `text-4xl sm:text-5xl` |
 | Category-detail "Explore {category}" subcategory-row heading | `text-2xl` | `text-3xl` |
 | PDP product name / price | `text-3xl` / `text-2xl` | `text-4xl` / `text-3xl` |
-| Hero `<h1>` | `text-5xl sm:text-6xl lg:text-7xl`, `max-w-2xl` | `text-6xl sm:text-7xl lg:text-8xl`, `max-w-3xl` (widened so the bigger text doesn't over-wrap) |
+| Hero `<h1>` | `text-5xl sm:text-6xl lg:text-7xl`, `max-w-2xl` | `text-6xl sm:text-7xl lg:text-8xl`, `max-w-3xl` (widened so the bigger text doesn't over-wrap) — **superseded 2026-08-28**, see the "Hero size reduction" note below: stepped back down to `text-5xl sm:text-6xl lg:text-7xl` with `max-w-4xl` |
 | Heritage banner heading | `text-4xl sm:text-5xl` | `text-5xl sm:text-6xl` |
 | Navbar logo wordmark | `text-2xl` | `text-3xl` |
 | Navbar nav-strip links/mega-menu trigger | `text-[0.9rem]` | `text-base` (tightened trigger/link `px`  and `NavigationMenuList` gap to keep it from wrapping at the `lg:` floor — verified clean at 1024px/1280px/1536px) |
@@ -56,6 +56,19 @@ Storefront text read too small/thin, so every prominent tier was bumped one Tail
 
 Verified: `npm run build`/`npm run lint` clean, no new warning categories. In-browser at 1024px/1280px/1536px desktop widths the navbar strip fits with room to spare, no wrap. Real mobile-viewport screenshot not captured — same recurring browser-automation-tool limitation noted throughout `00-PROGRESS.md`'s session log (window resize doesn't change the actual viewport in this environment); the responsive classes were verified by code inspection instead.
 
+### Hero size reduction (2026-08-28)
+
+The batch-17 bump made the Hero too dominant — a 4-line headline that pushed the CTAs below the fold. Stepped the whole block back down one notch (font-weight/copy/photo/CTA-behavior unchanged, sizing/spacing only):
+
+| Hero element | Was (batch 17) | Now |
+|---|---|---|
+| Container padding | `py-24 lg:py-32` | `py-14 lg:py-20` |
+| Content gap | `gap-6` | `gap-4` |
+| Headline | `text-5xl sm:text-6xl lg:text-7xl`, `max-w-2xl` | `text-6xl sm:text-7xl lg:text-8xl`, `max-w-3xl` → **reverted to `text-5xl sm:text-6xl lg:text-7xl`, widened to `max-w-4xl`** (the wider `max-w` at the smaller font is what brings it to 3 lines instead of 4) |
+| Subtext | `text-lg` | `text-xl` → **reverted to `text-lg`** |
+
+CTA buttons (`h-14 px-7 text-lg`) and the eyebrow badge were left as-is — out of this pass's stated scope. Verified in-browser at 1536px and 1024px: headline wraps to 3 lines, the full hero block (badge through both CTAs) fits inside a single ~700px-tall viewport instead of needing a scroll.
+
 ~~Single type family site-wide: Baloo 2 (variable, weights 400–800), matching the real Khaprail logo wordmark...~~ — superseded; Baloo 2/Fredoka/Quicksand were all part of the earlier rounded-sans direction this restyle replaced.
 - Generous line-height on body copy — this audience includes older, non-tech-fluent visitors researching a home-construction decision, not a fast tech audience
 
@@ -65,7 +78,7 @@ Verified: `npm run build`/`npm run lint` clean, no new warning categories. In-br
 
 Used by: the homepage's Featured Categories row (all root categories, right after the hero) and Trending Categories grid (`size="lg"`), and the category-detail page's "Explore {category}" subcategory row (e.g. Wall Tiles → Kitchen/Bathroom/Outdoor/Terracotta/Concrete/Mosaic Wall Tiles) — this last one is the closest real analog on this site to a "shop by space/application" row, since Khaprail's taxonomy models kitchen/bathroom/outdoor as subcategories rather than a separate top-level axis.
 
-**Scrollbar (2026-08-28):** the horizontal scroll containers on this row and on `ProductRail` used to show a persistent native scrollbar track below the content. Added a `scrollbar-hide` Tailwind v4 `@utility` (`src/index.css`) — `scrollbar-width: none` / `-ms-overflow-style: none` / `::-webkit-scrollbar { display: none }` — applied to both. Scroll functionality (arrow buttons, touch/trackpad swipe) is unaffected, only the visual scrollbar chrome is hidden. Not applied to `compare-table.tsx`'s data table, which keeps a visible scrollbar since that's a plain wide table, not a carousel.
+**Scrollbar (2026-08-28, refined same day):** the horizontal scroll containers on this row and on `ProductRail` used to show a persistent native scrollbar track below the content. First fix hid it outright (`scrollbar-hide`); refined same day into a hover-reveal treatment instead, since a fully-hidden scrollbar gives no affordance that a row is scrollable. Current utility is `scrollbar-fade` (`src/index.css`) — invisible at rest (`scrollbar-color`/`::-webkit-scrollbar-thumb` transparent), a thin (6px) low-contrast gray thumb fades in via `:hover`/`:active`/`:focus-within` on the scroll container. Applied to the same two spots (`category-icon-rail.tsx`, `product-rail.tsx` — the latter backs every homepage/PDP/category-page rail, so New Arrivals/Best Sellers/Top Picks Today/Similar Products/Explore More Products all inherit it). Scroll functionality (arrow buttons, touch/trackpad/keyboard) is unaffected, only the visual scrollbar chrome changes. Not applied to `compare-table.tsx`'s data table, which keeps its default visible scrollbar since that's a plain wide table, not a carousel.
 
 ## Spacing / layout
 

@@ -21,14 +21,14 @@ export function Hero() {
       </picture>
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-hero/95 via-hero/85 to-hero/40" />
 
-      <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-6 px-4 py-24 text-center sm:px-6 lg:items-start lg:py-32 lg:text-left">
+      <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-4 px-4 py-14 text-center sm:px-6 lg:items-start lg:py-20 lg:text-left">
         <span className="rounded-full bg-hero-foreground/90 px-4 py-1 text-sm font-medium text-hero">
           Est. 1982 · Lahore, Pakistan
         </span>
-        <h1 className="max-w-3xl font-heading text-6xl font-semibold leading-[1.05] text-hero-foreground sm:text-7xl lg:text-8xl">
+        <h1 className="max-w-4xl font-heading text-5xl font-semibold leading-[1.1] text-hero-foreground sm:text-6xl lg:text-7xl">
           Clay Roof &amp; Terracotta Tiles, Shaped in Lahore Since 1982
         </h1>
-        <p className="max-w-xl text-xl text-hero-foreground/85">
+        <p className="max-w-xl text-lg text-hero-foreground/85">
           Khaprail Tiles fires khaprail roof tiles, Multani tiles, and terracotta flooring from local clay —
           made for real Pakistani homes, not just a showroom.
         </p>
