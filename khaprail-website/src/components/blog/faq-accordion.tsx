@@ -12,7 +12,7 @@ export function FaqAccordion({ faqs }: FaqAccordionProps) {
 
   return (
     <div className="mt-12 border-t border-border pt-8">
-      <h2 className="mb-4 font-heading text-3xl font-semibold sm:text-4xl">Frequently Asked Questions</h2>
+      <h2 className="mb-4 font-heading text-4xl font-semibold sm:text-5xl">Frequently Asked Questions</h2>
       <Accordion>
         {faqs.map((faq) => (
           <AccordionItem key={faq.id} value={faq.id}>

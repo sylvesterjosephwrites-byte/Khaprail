@@ -37,7 +37,7 @@ export function CategoryShowcase() {
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6">
       <div className="rounded-2xl bg-panel-warm p-6 sm:p-10">
-        <h2 className="mb-8 text-center font-heading text-3xl font-bold text-foreground sm:text-4xl">
+        <h2 className="mb-8 text-center font-heading text-4xl font-bold text-foreground sm:text-5xl">
           Explore Our Range
         </h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -63,7 +63,7 @@ export function CategoryShowcase() {
                       />
                     )}
                   </div>
-                  <span className="font-heading text-xl font-bold text-white">{category.name}</span>
+                  <span className="font-heading text-2xl font-bold text-white">{category.name}</span>
                 </Link>
               ))}
         </div>

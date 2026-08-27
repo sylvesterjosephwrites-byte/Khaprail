@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
-import { CATEGORY_FILL_PALETTE } from "@/lib/category-fill-palette"
+import { CategoryBadgeCircle } from "@/components/shared/category-badge-circle"
 import { useCategories } from "@/hooks/use-categories"
 import { getRootCategories } from "@/lib/category-tree"
 
@@ -29,7 +29,7 @@ export function TrendingCategoriesGrid() {
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6">
       <div className="mb-10 text-center">
-        <h2 className="font-heading text-3xl font-semibold sm:text-4xl">Trending Categories</h2>
+        <h2 className="font-heading text-4xl font-semibold sm:text-5xl">Trending Categories</h2>
         <p className="mt-2 text-muted-foreground">Roof, floor, and wall tiles grouped the way you'd ask for them.</p>
       </div>
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
@@ -46,18 +46,13 @@ export function TrendingCategoriesGrid() {
                 to={`/categories/${category.slug}`}
                 className="group/card relative flex flex-col items-center gap-3 rounded-lg p-2 text-center outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
               >
-                <span
-                  className="flex size-28 items-center justify-center overflow-hidden rounded-full shadow-sm transition-transform group-hover/card:scale-105"
-                  style={{ backgroundColor: CATEGORY_FILL_PALETTE[index % CATEGORY_FILL_PALETTE.length] }}
-                >
-                  {category.cover_image_url && (
-                    <img src={category.cover_image_url} alt="" className="h-full w-full object-cover" />
-                  )}
-                </span>
+                <div className="transition-transform group-hover/card:scale-105">
+                  <CategoryBadgeCircle category={category} index={index} size="lg" />
+                </div>
                 {isNew(category.created_at) && (
                   <Badge className="absolute top-0 right-2 bg-navy text-navy-foreground">NEW</Badge>
                 )}
-                <span className="font-medium text-foreground">{category.name}</span>
+                <span className="text-lg font-medium text-foreground">{category.name}</span>
               </Link>
             ))}
       </div>

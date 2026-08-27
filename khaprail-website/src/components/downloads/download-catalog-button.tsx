@@ -11,7 +11,7 @@ export function DownloadCatalogButton({ collections }: DownloadCatalogButtonProp
     <PDFDownloadLink
       document={<CatalogDocument collections={collections} />}
       fileName="khaprail-tiles-catalog.pdf"
-      className={buttonVariants({ size: "lg", className: "h-12 px-6 text-base" })}
+      className={buttonVariants({ size: "lg", className: "h-14 px-7 text-lg" })}
     >
       {({ loading }) => (loading ? "Preparing..." : "Download Full Catalog")}
     </PDFDownloadLink>

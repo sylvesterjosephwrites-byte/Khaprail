@@ -32,7 +32,7 @@ export function CategoryTile({ category, compact }: CategoryTileProps) {
           />
         )}
       </motion.span>
-      <span className={cn("font-medium text-foreground", compact ? "text-xs" : "text-sm")}>
+      <span className={cn("font-medium text-foreground", compact ? "text-sm" : "text-base")}>
         {category.name}
       </span>
     </>

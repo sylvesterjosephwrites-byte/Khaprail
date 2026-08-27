@@ -25,17 +25,17 @@ export function Hero() {
         <span className="rounded-full bg-hero-foreground/90 px-4 py-1 text-sm font-medium text-hero">
           Est. 1982 · Lahore, Pakistan
         </span>
-        <h1 className="max-w-2xl font-heading text-5xl font-semibold leading-[1.1] text-hero-foreground sm:text-6xl lg:text-7xl">
+        <h1 className="max-w-3xl font-heading text-6xl font-semibold leading-[1.05] text-hero-foreground sm:text-7xl lg:text-8xl">
           Clay Roof &amp; Terracotta Tiles, Shaped in Lahore Since 1982
         </h1>
-        <p className="max-w-xl text-lg text-hero-foreground/85">
+        <p className="max-w-xl text-xl text-hero-foreground/85">
           Khaprail Tiles fires khaprail roof tiles, Multani tiles, and terracotta flooring from local clay —
           made for real Pakistani homes, not just a showroom.
         </p>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button
             size="lg"
-            className="h-12 rounded-full bg-hero-foreground px-6 text-base text-hero hover:bg-hero-foreground/85"
+            className="h-14 rounded-full bg-hero-foreground px-7 text-lg text-hero hover:bg-hero-foreground/85"
             nativeButton={false}
             render={
               <a
@@ -50,7 +50,7 @@ export function Hero() {
           <Button
             size="lg"
             variant="outline"
-            className="h-12 rounded-full border-hero-foreground/40 bg-transparent px-6 text-base text-hero-foreground hover:bg-hero-foreground/10"
+            className="h-14 rounded-full border-hero-foreground/40 bg-transparent px-7 text-lg text-hero-foreground hover:bg-hero-foreground/10"
             nativeButton={false}
             render={<Link to="/downloads" />}
           >

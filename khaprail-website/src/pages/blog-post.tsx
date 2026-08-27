@@ -52,7 +52,7 @@ export function BlogPost() {
           </div>
         )}
 
-        <h1 className="font-heading text-5xl font-semibold sm:text-6xl">{post.title}</h1>
+        <h1 className="font-heading text-6xl font-semibold sm:text-7xl">{post.title}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {[post.author, post.read_time_minutes ? `${post.read_time_minutes} min read` : null]
             .filter(Boolean)

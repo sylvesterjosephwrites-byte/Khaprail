@@ -120,7 +120,7 @@ export function CategoryDetail() {
           </span>
         </nav>
 
-        <h1 className="mb-8 font-heading text-5xl font-semibold sm:text-6xl">{category.name}</h1>
+        <h1 className="mb-8 font-heading text-6xl font-semibold sm:text-7xl">{category.name}</h1>
 
         <div className="mb-12">
           <ProductRail
@@ -136,7 +136,7 @@ export function CategoryDetail() {
 
         {children.length > 0 && (
           <div className="mb-12">
-            <h2 className="mb-4 font-heading text-2xl font-semibold">Explore {category.name}</h2>
+            <h2 className="mb-4 font-heading text-3xl font-semibold">Explore {category.name}</h2>
             <CategoryIconRail categories={children} />
           </div>
         )}

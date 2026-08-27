@@ -16,7 +16,7 @@ interface DownloadSpecSheetButtonProps {
 export function DownloadSpecSheetButton({
   product,
   size = "lg",
-  className = "h-12 px-6 text-base",
+  className = "h-14 px-7 text-lg",
 }: DownloadSpecSheetButtonProps) {
   return (
     <PDFDownloadLink

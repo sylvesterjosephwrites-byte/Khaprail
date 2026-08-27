@@ -12,7 +12,7 @@ export function BlogIndex() {
     <main className="flex-1">
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
         <div className="mb-10 text-center">
-          <h1 className="font-heading text-5xl font-semibold sm:text-6xl">Blog</h1>
+          <h1 className="font-heading text-6xl font-semibold sm:text-7xl">Blog</h1>
           <p className="mt-2 text-muted-foreground">Stories, guides, and updates from Khaprail Tiles.</p>
         </div>
 
@@ -39,8 +39,8 @@ export function BlogIndex() {
                   </div>
                   <CardContent className="flex flex-col gap-2 py-4">
                     {post.category && <Badge variant="secondary">{post.category}</Badge>}
-                    <h2 className="font-heading text-lg group-hover/link:underline">{post.title}</h2>
-                    {post.excerpt && <p className="text-sm text-muted-foreground">{post.excerpt}</p>}
+                    <h2 className="font-heading text-xl group-hover/link:underline">{post.title}</h2>
+                    {post.excerpt && <p className="text-base text-muted-foreground">{post.excerpt}</p>}
                     <p className="text-xs text-muted-foreground">
                       {[post.author, post.read_time_minutes ? `${post.read_time_minutes} min read` : null]
                         .filter(Boolean)

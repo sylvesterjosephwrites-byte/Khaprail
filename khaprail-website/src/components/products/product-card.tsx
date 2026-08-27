@@ -38,7 +38,7 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.price != null && (
             <p className="font-heading text-lg font-semibold text-price">PKR {product.price.toLocaleString()}</p>
           )}
-          <h3 className="font-medium text-foreground group-hover/link:underline">{product.name}</h3>
+          <h3 className="text-base font-medium text-foreground group-hover/link:underline">{product.name}</h3>
           {product.size && <p className="text-sm text-muted-foreground">{product.size}</p>}
         </CardContent>
       </Link>

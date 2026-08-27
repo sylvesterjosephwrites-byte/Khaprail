@@ -11,11 +11,11 @@ interface AboutItemAccordionProps {
 export function AboutItemAccordion({ product }: AboutItemAccordionProps) {
   return (
     <div>
-      <h2 className="mb-2 font-heading text-2xl font-semibold">About This Item</h2>
+      <h2 className="mb-2 font-heading text-3xl font-semibold">About This Item</h2>
       <Accordion>
         <AccordionItem value="details">
           <AccordionTrigger>Product Details</AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className="text-base">
             {product.description ?? "No additional details have been added for this product yet."}
           </AccordionContent>
         </AccordionItem>

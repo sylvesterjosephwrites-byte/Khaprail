@@ -49,7 +49,7 @@ export function SampleRequestDialog({ productId, productName }: SampleRequestDia
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button size="lg" className="h-12 px-6 text-base" />}>
+      <DialogTrigger render={<Button size="lg" className="h-14 px-7 text-lg" />}>
         Get a Sample
       </DialogTrigger>
       <DialogContent>

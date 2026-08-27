@@ -75,9 +75,9 @@ export function ProductDetail() {
         <div className="flex flex-col gap-6">
           <div>
             <div className="flex flex-wrap items-baseline justify-between gap-3">
-              <h1 className="font-heading text-3xl">{product.name}</h1>
+              <h1 className="font-heading text-4xl">{product.name}</h1>
               {product.price != null && (
-                <p className="font-heading text-2xl font-semibold text-primary">
+                <p className="font-heading text-3xl font-semibold text-primary">
                   PKR {product.price.toLocaleString()}
                 </p>
               )}
@@ -88,7 +88,7 @@ export function ProductDetail() {
             <SampleRequestDialog productId={product.id} productName={product.name} />
             <Suspense
               fallback={
-                <Button size="lg" variant="outline" className="h-12 px-6 text-base" disabled>
+                <Button size="lg" variant="outline" className="h-14 px-7 text-lg" disabled>
                   Download Spec Sheet
                 </Button>
               }

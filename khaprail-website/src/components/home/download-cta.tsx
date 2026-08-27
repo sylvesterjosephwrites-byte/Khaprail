@@ -25,16 +25,16 @@ export function DownloadCta() {
   return (
     <section className="border-t border-border bg-secondary/30 py-16">
       <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-4 px-4 text-center sm:px-6">
-        <h2 className="font-heading text-3xl font-semibold sm:text-4xl">Get the Full Catalog</h2>
+        <h2 className="font-heading text-4xl font-semibold sm:text-5xl">Get the Full Catalog</h2>
         <p className="max-w-xl text-muted-foreground">
           Every product, size, and category in one branded PDF — generated live from our current catalog.
         </p>
         {isLoading ? (
-          <Button size="lg" className="h-12 px-6 text-base" disabled>
+          <Button size="lg" className="h-14 px-7 text-lg" disabled>
             Preparing...
           </Button>
         ) : (
-          <Suspense fallback={<Button size="lg" className="h-12 px-6 text-base" disabled>Preparing...</Button>}>
+          <Suspense fallback={<Button size="lg" className="h-14 px-7 text-lg" disabled>Preparing...</Button>}>
             <DownloadCatalogButton collections={catalogCollections} />
           </Suspense>
         )}

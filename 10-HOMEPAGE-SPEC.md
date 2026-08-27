@@ -5,11 +5,11 @@ Layout skeleton borrowed from the Store.com reference PDF (Home.pdf), re-skinned
 ## Section order
 
 1. **Hero banner** — large lifestyle/product photo + headline + subhead + CTA button, with prev/next arrows if multiple hero slides
-2. **Featured Categories** — row of circular category-icon cards (photo inside a colored circle + label underneath), horizontally scrollable with arrow controls. Pulls from the `categories` table (main categories only, see 12-CATEGORY-TAXONOMY.md), admin-orderable. **Confirmed position: immediately after the hero, before anything else.**
+2. **Featured Categories** — row of circular category-icon badges (outlined Lucide icon in a soft navy/gold-tinted circle, real cover photo once one exists + label underneath), horizontally scrollable with arrow controls. Pulls from the `categories` table (main categories only, see 12-CATEGORY-TAXONOMY.md), admin-orderable. **Confirmed position: immediately after the hero, before anything else.** (2026-08-27: switched from a per-index rainbow color fill to the icon-badge treatment — see `02-DESIGN-SYSTEM.md`.)
 3. **3-image feature row** — three large photo cards side by side, each linking to a collection/category (e.g. "Shop Roof Tiles," "Explore Wall Tiles," "Outdoor Range")
 4. **Best Sellers carousel** — horizontal product carousel, tabbed by category if useful. Must be backed by real inquiry/order-volume data — see honest-data rule in 02-DESIGN-SYSTEM.md. Do not launch this section until that data exists; show New Arrivals only until then.
 5. **Heritage banner** — full-width brand-story band ("Since 1982," craftsmanship story), replaces the reference's "Final Clearance" promo slot
-6. **Trending/Collections grid** — 2×2 (or similar) photo grid of featured collections with "NEW" badges only where genuinely new
+6. **Trending/Collections grid** — 2×2 (or similar) grid of featured collections as circular icon badges (same treatment as Featured Categories, larger `size="lg"`) with "NEW" badges only where genuinely new
 7. **New Arrivals carousel** — auto-populated from real `created_at`, not manually curated
 8. **Footer** — Categories / Quick Links / Social columns, plus an "Ask Khaprail" chat-style widget (optional v1 scope — confirm before building; can be a simple WhatsApp deep-link button instead of a full chat widget if that's simpler for v1)
 

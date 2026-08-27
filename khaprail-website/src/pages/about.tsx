@@ -13,7 +13,7 @@ export function About() {
           <span className="rounded-full bg-primary/10 px-4 py-1 text-sm font-medium text-primary">
             Est. 1982 · Lahore, Pakistan
           </span>
-          <h1 className="font-heading text-5xl font-semibold sm:text-6xl">About Khaprail Tiles</h1>
+          <h1 className="font-heading text-6xl font-semibold sm:text-7xl">About Khaprail Tiles</h1>
         </div>
       </section>
 

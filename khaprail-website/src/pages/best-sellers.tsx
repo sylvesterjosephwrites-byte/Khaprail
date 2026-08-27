@@ -11,7 +11,7 @@ export function BestSellers() {
     <main className="flex-1">
       <div className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6">
         <div className="mb-10 text-center">
-          <h1 className="font-heading text-5xl font-semibold sm:text-6xl">Best Sellers</h1>
+          <h1 className="font-heading text-6xl font-semibold sm:text-7xl">Best Sellers</h1>
           <p className="mt-2 text-muted-foreground">Our most-requested tiles, ranked by real customer inquiries.</p>
         </div>
         {isLoading ? (

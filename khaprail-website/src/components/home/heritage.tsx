@@ -26,10 +26,10 @@ export function Heritage() {
         <span className="rounded-full bg-hero-foreground/90 px-4 py-1 text-sm font-medium text-hero">
           Our Heritage · Est. 1982
         </span>
-        <h2 className="max-w-2xl font-heading text-4xl font-semibold leading-[1.1] text-hero-foreground sm:text-5xl">
+        <h2 className="max-w-2xl font-heading text-5xl font-semibold leading-[1.1] text-hero-foreground sm:text-6xl">
           Est. 1982 — A Lahore Craft, Still Going
         </h2>
-        <p className="max-w-xl text-lg text-hero-foreground/85">
+        <p className="max-w-xl text-xl text-hero-foreground/85">
           Khaprail Tiles has shaped clay roof tiles, Multani tiles, and terracotta flooring in Lahore since 1982.
           Every khaprail, disc, and Multani tile we fire uses the same craft the workshop was built on —
           made for real roofs and floors, not just a showroom shelf.

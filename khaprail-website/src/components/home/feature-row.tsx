@@ -41,7 +41,7 @@ export function FeatureRow() {
                     />
                   )}
                 </div>
-                <span className="font-heading text-xl font-semibold text-foreground">
+                <span className="font-heading text-2xl font-semibold text-foreground">
                   Shop {category.name}
                 </span>
               </Link>

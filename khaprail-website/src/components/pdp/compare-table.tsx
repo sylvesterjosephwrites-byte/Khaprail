@@ -28,7 +28,7 @@ export function CompareTable({ product, comparableProducts }: CompareTableProps)
 
   return (
     <div>
-      <h2 className="mb-4 font-heading text-2xl font-semibold sm:text-3xl">Compare With Similar Items</h2>
+      <h2 className="mb-4 font-heading text-3xl font-semibold sm:text-4xl">Compare With Similar Items</h2>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[480px] border-collapse text-sm">
           <thead>

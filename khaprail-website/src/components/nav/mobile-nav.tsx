@@ -47,7 +47,7 @@ export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
         <nav className="flex flex-col gap-1 overflow-y-auto px-4 pb-4">
           <Accordion>
             <AccordionItem value="categories">
-              <AccordionTrigger>Categories</AccordionTrigger>
+              <AccordionTrigger className="text-base font-heading font-semibold">Categories</AccordionTrigger>
               <AccordionContent>
                 {isLoading ? (
                   <div className="flex flex-col gap-2">
@@ -68,7 +68,7 @@ export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
                             render={
                               <Link
                                 to={`/categories/${category.slug}`}
-                                className="flex items-center gap-3 rounded-lg py-2 text-sm hover:bg-muted"
+                                className="flex items-center gap-3 rounded-lg py-2 text-base hover:bg-muted"
                               />
                             }
                           >
@@ -117,7 +117,7 @@ export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
               render={
                 <Link
                   to={link.to}
-                  className="flex min-h-11 items-center rounded-lg py-2.5 font-heading text-base font-semibold hover:bg-muted"
+                  className="flex min-h-11 items-center rounded-lg py-2.5 font-heading text-lg font-semibold hover:bg-muted"
                 />
               }
             >
@@ -125,7 +125,7 @@ export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
             </SheetClose>
           ))}
           <Button
-            className="mt-2 h-11 w-full text-base"
+            className="mt-2 h-12 w-full text-lg"
             nativeButton={false}
             render={<a href={buildWhatsAppUrl(DEFAULT_WHATSAPP_MESSAGE)} target="_blank" rel="noreferrer" />}
           >

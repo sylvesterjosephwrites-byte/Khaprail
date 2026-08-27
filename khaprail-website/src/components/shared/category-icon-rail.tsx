@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { CATEGORY_FILL_PALETTE } from "@/lib/category-fill-palette"
+import { CategoryBadgeCircle } from "@/components/shared/category-badge-circle"
 import type { Category } from "@/types/category"
 
 interface CategoryIconRailProps {
@@ -56,15 +56,8 @@ export function CategoryIconRail({ categories, isLoading }: CategoryIconRailProp
             to={`/categories/${category.slug}`}
             className="flex w-24 shrink-0 snap-start flex-col items-center gap-2 text-center outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-lg p-1"
           >
-            <span
-              className="flex size-20 items-center justify-center overflow-hidden rounded-full shadow-sm"
-              style={{ backgroundColor: CATEGORY_FILL_PALETTE[index % CATEGORY_FILL_PALETTE.length] }}
-            >
-              {category.cover_image_url && (
-                <img src={category.cover_image_url} alt="" className="h-full w-full object-cover" />
-              )}
-            </span>
-            <span className="text-xs font-medium text-foreground">{category.name}</span>
+            <CategoryBadgeCircle category={category} index={index} />
+            <span className="text-sm font-medium text-foreground">{category.name}</span>
           </Link>
         ))}
       </div>
