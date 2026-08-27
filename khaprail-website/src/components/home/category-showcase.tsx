@@ -54,7 +54,7 @@ export function CategoryShowcase() {
                   to={`/categories/${category.slug}`}
                   className="group flex flex-col items-center gap-3 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                 >
-                  <div className="relative flex aspect-[3/4] w-full items-center justify-center overflow-hidden rounded-2xl bg-black/20 shadow-sm">
+                  <div className="relative flex aspect-[3/4] w-full items-center justify-center overflow-hidden rounded-2xl bg-foreground/10 shadow-sm">
                     {category.cover_image_url && (
                       <img
                         src={category.cover_image_url}
@@ -63,7 +63,7 @@ export function CategoryShowcase() {
                       />
                     )}
                   </div>
-                  <span className="font-heading text-2xl font-bold text-white">{category.name}</span>
+                  <span className="font-heading text-2xl font-bold text-foreground">{category.name}</span>
                 </Link>
               ))}
         </div>

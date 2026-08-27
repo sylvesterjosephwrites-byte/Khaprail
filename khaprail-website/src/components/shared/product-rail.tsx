@@ -125,7 +125,7 @@ export function ProductRail({
           ))}
         </div>
       ) : hasProducts ? (
-        <div ref={scrollRef} className="flex snap-x gap-6 overflow-x-auto pb-2">
+        <div ref={scrollRef} className="scrollbar-hide flex snap-x gap-6 overflow-x-auto pb-2">
           {products.map((product) => (
             <div key={product.id} className="w-48 shrink-0 snap-start">
               <ProductCard product={product} />
