@@ -23,6 +23,15 @@ const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000
 // with no response, discovered by actually testing chat live in-browser.
 const RATE_LIMIT_CHECK_TIMEOUT_MS = 5000
 const ANTHROPIC_FETCH_TIMEOUT_MS = 45000
+// A per-chunk ceiling on the Anthropic stream, found necessary by live
+// testing: `AbortSignal.timeout()` on the initial fetch does not reliably
+// abort an already-in-flight streamed body read if the upstream connection
+// stalls after headers arrive — one live request sat at 0 bytes for 60s+
+// with no error and no data. Bound every individual read() too, so a stall
+// ends the response gracefully instead of leaving the client hanging.
+const ANTHROPIC_STREAM_READ_TIMEOUT_MS = 20000
+const STREAM_STALL_FALLBACK_TEXT =
+  "Sorry, I'm having trouble responding right now — please try WhatsApp or the \"Get a Sample\" option on the site."
 
 async function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
   let timer: ReturnType<typeof setTimeout>
@@ -195,10 +204,23 @@ function streamAnthropicText(anthropicResponse: Response): ReadableStream<Uint8A
   const decoder = new TextDecoder()
   const encoder = new TextEncoder()
   let buffer = ""
+  let sentAny = false
 
   return new ReadableStream<Uint8Array>({
     async pull(controller) {
-      const { done, value } = await reader.read()
+      let done: boolean, value: Uint8Array | undefined
+      try {
+        ;({ done, value } = await withTimeout(
+          reader.read(),
+          ANTHROPIC_STREAM_READ_TIMEOUT_MS,
+          "Anthropic stream read"
+        ))
+      } catch {
+        if (!sentAny) controller.enqueue(encoder.encode(STREAM_STALL_FALLBACK_TEXT))
+        controller.close()
+        void reader.cancel()
+        return
+      }
       if (done) {
         controller.close()
         return
@@ -213,6 +235,7 @@ function streamAnthropicText(anthropicResponse: Response): ReadableStream<Uint8A
         try {
           const event = JSON.parse(payload)
           if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
+            sentAny = true
             controller.enqueue(encoder.encode(event.delta.text as string))
           } else if (event.type === "message_stop") {
             // Anthropic's stream ends here, but relying on the underlying
