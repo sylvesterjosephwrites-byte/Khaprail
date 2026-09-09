@@ -18,8 +18,12 @@ import { cn } from "@/lib/utils"
 // on hover/active/open rather than an underline. `px-2` tightens the built-in
 // trigger/link horizontal padding (navigation-menu.tsx's shared px-2.5) so
 // the larger text below doesn't crowd/wrap at narrower desktop widths.
+// Bumped 2026-09-10: text-base -> text-lg (a clear size step, per request)
+// and the list's gap-0.5 -> gap-3 for noticeably more breathing room
+// between items — verified at 1024px (the `lg` breakpoint floor) through
+// 1536px with no overflow/wrap, see 00-PROGRESS.md.
 const NAV_ITEM_CLASS =
-  "rounded-full px-2 text-base font-medium text-navy-foreground hover:bg-navy-foreground/15 data-active:bg-navy-foreground/15 data-popup-open:bg-navy-foreground/15 data-open:bg-navy-foreground/15"
+  "rounded-full px-2 text-lg font-medium text-navy-foreground hover:bg-navy-foreground/15 data-active:bg-navy-foreground/15 data-popup-open:bg-navy-foreground/15 data-open:bg-navy-foreground/15"
 
 // Two-bar header (2026-08-25 restyle): a white top bar (logo + real CTA —
 // no Login/Wishlist/Cart/search affordances were added here since this site
@@ -61,7 +65,7 @@ export function SiteHeader() {
       <div className="hidden bg-navy lg:block">
         <div className="mx-auto flex h-12 max-w-7xl items-center px-4 sm:px-6">
           <NavigationMenu className="max-w-none flex-1">
-            <NavigationMenuList className="gap-0.5">
+            <NavigationMenuList className="gap-3">
               <CategoriesMegaMenu
                 categories={categories}
                 isLoading={isLoading}
