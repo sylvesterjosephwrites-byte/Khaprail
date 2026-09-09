@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
-import type { ActiveFilters } from "@/lib/product-filters"
+import { orderFilterTypes, filterTypeLabel, type ActiveFilters } from "@/lib/product-filters"
 import type { FilterType } from "@/types/product"
 
 interface FilterBarProps {
@@ -13,15 +13,6 @@ interface FilterBarProps {
   onClearAll: () => void
 }
 
-// Display order for the categories named in 04-PRODUCT-LISTING-FILTERS.md —
-// the values within each category are never hardcoded (they come from the
-// admin-editable `filter_types` table), only this category ordering is.
-const FILTER_TYPE_ORDER = ["color", "material", "size", "shape", "roof"]
-
-function filterTypeLabel(filterType: string): string {
-  return filterType.charAt(0).toUpperCase() + filterType.slice(1)
-}
-
 export function FilterBar({
   filterGroups,
   facetCounts,
@@ -30,14 +21,7 @@ export function FilterBar({
   onToggle,
   onClearAll,
 }: FilterBarProps) {
-  const orderedTypes = Object.keys(filterGroups).sort((a, b) => {
-    const ia = FILTER_TYPE_ORDER.indexOf(a)
-    const ib = FILTER_TYPE_ORDER.indexOf(b)
-    if (ia === -1 && ib === -1) return a.localeCompare(b)
-    if (ia === -1) return 1
-    if (ib === -1) return -1
-    return ia - ib
-  })
+  const orderedTypes = orderFilterTypes(Object.keys(filterGroups))
 
   const hasActiveFilters = Object.values(activeFilters).some((values) => values.length > 0)
 

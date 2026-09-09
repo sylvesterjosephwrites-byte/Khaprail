@@ -31,6 +31,28 @@ export function filtersToSearchParams(filters: ActiveFilters, sort: SortOption):
   return params
 }
 
+// Display order for the categories named in 04-PRODUCT-LISTING-FILTERS.md —
+// shared by the desktop `FilterBar` and the mobile `MobileFiltersDrawer` so
+// the two surfaces never drift. The values within each category are never
+// hardcoded (they come from the admin-editable `filter_types` table), only
+// this category ordering is.
+const FILTER_TYPE_ORDER = ["color", "material", "size", "shape", "roof"]
+
+export function orderFilterTypes(filterTypes: string[]): string[] {
+  return [...filterTypes].sort((a, b) => {
+    const ia = FILTER_TYPE_ORDER.indexOf(a)
+    const ib = FILTER_TYPE_ORDER.indexOf(b)
+    if (ia === -1 && ib === -1) return a.localeCompare(b)
+    if (ia === -1) return 1
+    if (ib === -1) return -1
+    return ia - ib
+  })
+}
+
+export function filterTypeLabel(filterType: string): string {
+  return filterType.charAt(0).toUpperCase() + filterType.slice(1)
+}
+
 export function toggleFilterValue(filters: ActiveFilters, filterType: string, value: string): ActiveFilters {
   const current = filters[filterType] ?? []
   const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value]

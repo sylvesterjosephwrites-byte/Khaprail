@@ -2,14 +2,22 @@ import { Outlet } from "react-router-dom"
 import { SiteHeader } from "@/components/layout/site-header"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { FloatingWhatsAppButton } from "@/components/shared/floating-whatsapp-button"
+import { MobileTabBar } from "@/components/nav/mobile-tab-bar"
+import { MobileDrawerProvider } from "@/lib/mobile-drawer-context"
 
+// `pb-20` reserves room for the fixed mobile `MobileTabBar` so it never
+// overlaps page content/the footer — `lg:pb-0` since that bar only shows
+// below the `lg` breakpoint.
 export function SiteLayout() {
   return (
-    <div className="flex min-h-svh flex-col">
-      <SiteHeader />
-      <Outlet />
-      <SiteFooter />
-      <FloatingWhatsAppButton />
-    </div>
+    <MobileDrawerProvider>
+      <div className="flex min-h-svh flex-col pb-20 lg:pb-0">
+        <SiteHeader />
+        <Outlet />
+        <SiteFooter />
+        <FloatingWhatsAppButton />
+        <MobileTabBar />
+      </div>
+    </MobileDrawerProvider>
   )
 }

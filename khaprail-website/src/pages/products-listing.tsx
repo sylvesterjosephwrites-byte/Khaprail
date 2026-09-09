@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useSearchParams } from "react-router-dom"
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom"
 import {
   Select,
   SelectContent,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { FilterBar } from "@/components/products/filter-bar"
+import { MobileFiltersDrawer } from "@/components/products/mobile-filters-drawer"
 import { ProductCard } from "@/components/products/product-card"
 import { Pagination } from "@/components/shared/pagination"
 import { useFilterTypes } from "@/hooks/use-filter-types"
@@ -23,10 +24,22 @@ import {
 
 const PAGE_SIZE = 12
 
+// The mobile filters drawer's open state lives in the URL hash rather than
+// a query param, since `parseFiltersFromSearchParams` treats every query
+// key except `sort` as a real filter type — a `?mfilters=1` param would be
+// misread as an attribute filter and silently break the product query.
+const MOBILE_FILTERS_HASH = "#mobile-filters"
+
 // /products — filterable listing (04-PRODUCT-LISTING-FILTERS.md). Filters
-// reflect into the URL so views are shareable/bookmarkable/indexable.
+// reflect into the URL so views are shareable/bookmarkable/indexable. On
+// mobile, the chip-row `FilterBar` is replaced by `MobileFiltersDrawer` (a
+// two-pane facet drill-down opened from the bottom tab bar) — both drive
+// the exact same `activeFilters` state.
 export function ProductsListing() {
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const mobileFiltersOpen = location.hash === MOBILE_FILTERS_HASH
   const activeFilters = parseFiltersFromSearchParams(searchParams)
   const sort = parseSortFromSearchParams(searchParams)
   const [page, setPage] = useState(1)
@@ -41,18 +54,31 @@ export function ProductsListing() {
   const pageCount = Math.max(1, Math.ceil(products.length / PAGE_SIZE))
   const pagedProducts = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
+  // Navigates with the new search params while preserving the current URL
+  // hash — `useSearchParams`'s setter drops the hash entirely, which would
+  // otherwise close the mobile filters drawer (its open state is
+  // `location.hash === '#mobile-filters'`) on every single filter tap.
+  function applySearchParams(next: URLSearchParams) {
+    const search = next.toString()
+    navigate(`${location.pathname}${search ? `?${search}` : ""}${location.hash}`, { replace: true })
+  }
+
   function handleToggle(filterType: string, value: string) {
     const next = toggleFilterValue(activeFilters, filterType, value)
-    setSearchParams(filtersToSearchParams(next, sort), { replace: true })
+    applySearchParams(filtersToSearchParams(next, sort))
   }
 
   function handleClearAll() {
-    setSearchParams(filtersToSearchParams({}, sort), { replace: true })
+    applySearchParams(filtersToSearchParams({}, sort))
   }
 
   function handleSortChange(value: SortOption | null) {
     if (!value) return
-    setSearchParams(filtersToSearchParams(activeFilters, value), { replace: true })
+    applySearchParams(filtersToSearchParams(activeFilters, value))
+  }
+
+  function closeMobileFilters() {
+    navigate(`${location.pathname}${location.search}`, { replace: true })
   }
 
   return (
@@ -64,14 +90,16 @@ export function ProductsListing() {
         </div>
 
         <div className="mb-8 flex flex-col gap-6 border-b border-border pb-8 sm:flex-row sm:items-start sm:justify-between">
-          <FilterBar
-            filterGroups={filterGroups}
-            facetCounts={facetCounts}
-            activeFilters={activeFilters}
-            isLoading={filtersLoading}
-            onToggle={handleToggle}
-            onClearAll={handleClearAll}
-          />
+          <div className="hidden lg:block">
+            <FilterBar
+              filterGroups={filterGroups}
+              facetCounts={facetCounts}
+              activeFilters={activeFilters}
+              isLoading={filtersLoading}
+              onToggle={handleToggle}
+              onClearAll={handleClearAll}
+            />
+          </div>
           <Select value={sort} onValueChange={handleSortChange}>
             <SelectTrigger className="w-full sm:w-44">
               <SelectValue placeholder="Sort" />
@@ -107,6 +135,16 @@ export function ProductsListing() {
           </>
         )}
       </div>
+
+      <MobileFiltersDrawer
+        open={mobileFiltersOpen}
+        onClose={closeMobileFilters}
+        filterGroups={filterGroups}
+        facetCounts={facetCounts}
+        activeFilters={activeFilters}
+        onToggle={handleToggle}
+        onClearAll={handleClearAll}
+      />
     </main>
   )
 }
