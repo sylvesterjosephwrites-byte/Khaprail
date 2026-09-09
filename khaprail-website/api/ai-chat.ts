@@ -214,6 +214,17 @@ function streamAnthropicText(anthropicResponse: Response): ReadableStream<Uint8A
           const event = JSON.parse(payload)
           if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
             controller.enqueue(encoder.encode(event.delta.text as string))
+          } else if (event.type === "message_stop") {
+            // Anthropic's stream ends here, but relying on the underlying
+            // socket to report EOF on the next read() left the HTTP
+            // response open indefinitely in production (confirmed live:
+            // the full reply arrived in ~2s but the connection never
+            // closed, so the browser's reader.read() loop hung forever
+            // waiting for `done: true`). Close explicitly instead of
+            // waiting for a natural EOF that never came.
+            controller.close()
+            void reader.cancel()
+            return
           }
         } catch {
           // Ignore a malformed/partial SSE line — the next pull will
