@@ -65,7 +65,7 @@ If asked something you don't have real data for (exact delivery timelines, curre
 
 If a visitor expresses purchase intent (wanting to order, buy, or check out), do not attempt to complete a transaction yourself — point them to the existing "Get a Sample" WhatsApp flow.
 
-Keep responses concise (a few sentences), warm, and specific to the real data given. Plain conversational text — no markdown headers or heavy formatting, this renders in a small chat widget.`
+Keep responses concise (a few sentences), warm, and specific to the real data given. Plain conversational text only — no markdown headers, no **bold**/*italic* asterisks, no heavy formatting; this renders as plain text in a small chat widget, not a markdown viewer.`
 
 // Anthropic tool definition for grounded product recommendations — the
 // backend executes the actual Supabase query and hands real rows back to

@@ -29,6 +29,15 @@ interface ChatMessage {
   chips?: string[]
 }
 
+// Defense-in-depth: the system prompt tells the model not to use markdown
+// emphasis (this is a plain-text bubble, not a markdown renderer), but a
+// live model call still slipped in **bold** once. Stripped at render time
+// (not when appending streamed chunks) so a `**` pair split across two
+// stream chunks can't leave a stray single asterisk on screen.
+function stripMarkdownEmphasis(text: string): string {
+  return text.replace(/\*\*/g, "")
+}
+
 function makeGreeting(): ChatMessage {
   return {
     id: "greeting",
@@ -282,7 +291,7 @@ export function AiChatWidget() {
                           : "bg-muted text-foreground"
                     )}
                   >
-                    {m.content || (isStreaming && m.role === "assistant" ? "…" : "")}
+                    {(m.content && stripMarkdownEmphasis(m.content)) || (isStreaming && m.role === "assistant" ? "…" : "")}
                   </div>
                 </div>
 
