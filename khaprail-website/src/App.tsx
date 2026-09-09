@@ -25,6 +25,8 @@ import { AdminBlogEditor } from "@/pages/admin/blog-editor"
 import { AdminSampleInquiriesList } from "@/pages/admin/sample-inquiries-list"
 import { AdminLifestyleTilesList } from "@/pages/admin/lifestyle-tiles-list"
 import { AdminLifestyleTileEditor } from "@/pages/admin/lifestyle-tile-editor"
+import { AdminOfferCardsList } from "@/pages/admin/offer-cards-list"
+import { AdminOfferCardEditor } from "@/pages/admin/offer-card-editor"
 import { AuthProvider } from "@/lib/auth-context"
 import { ProtectedRoute } from "@/components/admin/protected-route"
 import { AdminLayout } from "@/components/admin/admin-layout"
@@ -71,6 +73,9 @@ function App() {
               <Route path="/admin/lifestyle-tiles" element={<AdminLifestyleTilesList />} />
               <Route path="/admin/lifestyle-tiles/new" element={<AdminLifestyleTileEditor />} />
               <Route path="/admin/lifestyle-tiles/:id/edit" element={<AdminLifestyleTileEditor />} />
+              <Route path="/admin/offer-cards" element={<AdminOfferCardsList />} />
+              <Route path="/admin/offer-cards/new" element={<AdminOfferCardEditor />} />
+              <Route path="/admin/offer-cards/:id/edit" element={<AdminOfferCardEditor />} />
             </Route>
           </Route>
         </Routes>

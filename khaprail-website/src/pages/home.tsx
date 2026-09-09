@@ -1,6 +1,7 @@
 import { Hero } from "@/components/home/hero"
 import { FeaturedCategoriesRow } from "@/components/home/featured-categories-row"
 import { FeatureRow } from "@/components/home/feature-row"
+import { OffersSection } from "@/components/home/offers-section"
 import { BestSellersSection } from "@/components/home/best-sellers-section"
 import { Heritage } from "@/components/home/heritage"
 import { TrendingCategoriesGrid } from "@/components/home/trending-categories-grid"
@@ -29,12 +30,18 @@ import { DownloadCta } from "@/components/home/download-cta"
 // for Every Space") was added after Category Showcase for the same
 // reason — an admin-curated editorial alternative that does the same
 // "browse by space" job differently, kept alongside Category Showcase
-// rather than replacing it, per request.
+// rather than replacing it, per request. Offers ("Offers, Available Now")
+// was added after Featured Categories, near the top — real always-true
+// capabilities (free samples/bulk pricing/delivery/new-customer welcome),
+// never a percentage-off discount, since no live promotion is confirmed;
+// fully admin-editable so real terms can replace the placeholder wording
+// later with no code change — see 00-PROGRESS.md.
 export function Home() {
   return (
     <main className="flex-1">
       <Hero />
       <FeaturedCategoriesRow />
+      <OffersSection />
       <FeatureRow />
       <BestSellersSection />
       <TrendingCategoriesGrid />
