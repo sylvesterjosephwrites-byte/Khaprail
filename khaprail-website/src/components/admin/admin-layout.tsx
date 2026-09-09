@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { label: "Categories", to: "/admin/categories" },
   { label: "Filter Types", to: "/admin/filter-types" },
   { label: "Blog Posts", to: "/admin/blog" },
+  { label: "Lifestyle Tiles", to: "/admin/lifestyle-tiles" },
   { label: "Sample Inquiries", to: "/admin/sample-inquiries" },
 ] as const
 

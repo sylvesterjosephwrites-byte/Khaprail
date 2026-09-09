@@ -23,6 +23,8 @@ import { AdminFilterTypesList } from "@/pages/admin/filter-types-list"
 import { AdminBlogList } from "@/pages/admin/blog-list"
 import { AdminBlogEditor } from "@/pages/admin/blog-editor"
 import { AdminSampleInquiriesList } from "@/pages/admin/sample-inquiries-list"
+import { AdminLifestyleTilesList } from "@/pages/admin/lifestyle-tiles-list"
+import { AdminLifestyleTileEditor } from "@/pages/admin/lifestyle-tile-editor"
 import { AuthProvider } from "@/lib/auth-context"
 import { ProtectedRoute } from "@/components/admin/protected-route"
 import { AdminLayout } from "@/components/admin/admin-layout"
@@ -66,6 +68,9 @@ function App() {
               <Route path="/admin/blog/new" element={<AdminBlogEditor />} />
               <Route path="/admin/blog/:id/edit" element={<AdminBlogEditor />} />
               <Route path="/admin/sample-inquiries" element={<AdminSampleInquiriesList />} />
+              <Route path="/admin/lifestyle-tiles" element={<AdminLifestyleTilesList />} />
+              <Route path="/admin/lifestyle-tiles/new" element={<AdminLifestyleTileEditor />} />
+              <Route path="/admin/lifestyle-tiles/:id/edit" element={<AdminLifestyleTileEditor />} />
             </Route>
           </Route>
         </Routes>

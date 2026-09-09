@@ -5,6 +5,7 @@ import { BestSellersSection } from "@/components/home/best-sellers-section"
 import { Heritage } from "@/components/home/heritage"
 import { TrendingCategoriesGrid } from "@/components/home/trending-categories-grid"
 import { CategoryShowcase } from "@/components/home/category-showcase"
+import { LifestyleTilesSection } from "@/components/home/lifestyle-tiles-section"
 import { ShopByCategorySection } from "@/components/home/shop-by-category-section"
 import { NewArrivalsSection } from "@/components/home/new-arrivals-section"
 import { VideosSection } from "@/components/home/videos-section"
@@ -24,7 +25,11 @@ import { DownloadCta } from "@/components/home/download-cta"
 // request — see 00-PROGRESS.md. Shop by Category (tabbed category browser +
 // product carousel) was added after Category Showcase for the same reason —
 // neither is in the spec's confirmed order, but both are real, data-driven
-// additions rather than one-off requests to delete.
+// additions rather than one-off requests to delete. Lifestyle Tiles ("Tiles
+// for Every Space") was added after Category Showcase for the same
+// reason — an admin-curated editorial alternative that does the same
+// "browse by space" job differently, kept alongside Category Showcase
+// rather than replacing it, per request.
 export function Home() {
   return (
     <main className="flex-1">
@@ -34,6 +39,7 @@ export function Home() {
       <BestSellersSection />
       <TrendingCategoriesGrid />
       <CategoryShowcase />
+      <LifestyleTilesSection />
       <ShopByCategorySection />
       <NewArrivalsSection />
       <VideosSection />
