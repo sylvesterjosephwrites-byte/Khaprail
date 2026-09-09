@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ConfirmDeleteDialog } from "@/components/admin/confirm-delete-dialog"
 import { useCategories } from "@/hooks/use-categories"
@@ -41,7 +42,10 @@ export function AdminCategoriesList() {
                 className="flex-1 hover:underline"
                 style={{ paddingLeft: `${depth * 1.5}rem` }}
               >
-                <p className={cn("font-medium text-foreground", depth > 0 && "text-sm")}>{category.name}</p>
+                <p className={cn("flex items-center gap-2 font-medium text-foreground", depth > 0 && "text-sm")}>
+                  {category.name}
+                  {category.is_featured && <Badge variant="secondary">Featured</Badge>}
+                </p>
                 <p className="text-sm text-muted-foreground">/{category.slug}</p>
               </Link>
               <ConfirmDeleteDialog

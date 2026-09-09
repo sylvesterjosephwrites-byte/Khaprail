@@ -5,6 +5,7 @@ import { BestSellersSection } from "@/components/home/best-sellers-section"
 import { Heritage } from "@/components/home/heritage"
 import { TrendingCategoriesGrid } from "@/components/home/trending-categories-grid"
 import { CategoryShowcase } from "@/components/home/category-showcase"
+import { ShopByCategorySection } from "@/components/home/shop-by-category-section"
 import { NewArrivalsSection } from "@/components/home/new-arrivals-section"
 import { VideosSection } from "@/components/home/videos-section"
 import { DownloadCta } from "@/components/home/download-cta"
@@ -17,7 +18,10 @@ import { DownloadCta } from "@/components/home/download-cta"
 // honest-data-backed sections; see 00-PROGRESS.md for this adaptation.
 // Category Showcase (warm-panel 3-photo section, distinct from the earlier
 // 3-image feature row) was added after Trending Categories per its own
-// request — see 00-PROGRESS.md.
+// request — see 00-PROGRESS.md. Shop by Category (tabbed category browser +
+// product carousel) was added after Category Showcase for the same reason —
+// neither is in the spec's confirmed order, but both are real, data-driven
+// additions rather than one-off requests to delete.
 export function Home() {
   return (
     <main className="flex-1">
@@ -28,6 +32,7 @@ export function Home() {
       <Heritage />
       <TrendingCategoriesGrid />
       <CategoryShowcase />
+      <ShopByCategorySection />
       <NewArrivalsSection />
       <VideosSection />
       <DownloadCta />

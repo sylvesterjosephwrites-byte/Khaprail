@@ -5,14 +5,16 @@ import type { Product } from "@/types/product"
 interface UseProductsByCategoryResult {
   products: Product[]
   isLoading: boolean
+  error: string | null
 }
 
 const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, price, created_at"
 
-/** /categories/[slug] — every product in a category (exact match, not recursive into children). */
+/** Every product in a category (exact match, not recursive into children) — used by `/categories/[slug]` and the homepage "Shop by Category" tabs. */
 export function useProductsByCategory(categoryId: string | null): UseProductsByCategoryResult {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(() => supabase !== null && !!categoryId)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!supabase || !categoryId) {
@@ -23,15 +25,20 @@ export function useProductsByCategory(categoryId: string | null): UseProductsByC
 
     let cancelled = false
     setIsLoading(true)
+    setError(null)
 
     supabase
       .from("products")
       .select(PRODUCT_COLUMNS)
       .eq("category_id", categoryId)
       .order("name", { ascending: true })
-      .then(({ data, error }) => {
+      .then(({ data, error: queryError }) => {
         if (cancelled) return
-        if (!error) setProducts(data ?? [])
+        if (queryError) {
+          setError(queryError.message)
+        } else {
+          setProducts(data ?? [])
+        }
         setIsLoading(false)
       })
 
@@ -40,5 +47,5 @@ export function useProductsByCategory(categoryId: string | null): UseProductsByC
     }
   }, [categoryId])
 
-  return { products, isLoading }
+  return { products, isLoading, error }
 }

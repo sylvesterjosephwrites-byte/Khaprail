@@ -8,7 +8,8 @@ import { cn } from "@/lib/utils"
 import type { Product } from "@/types/product"
 
 interface ProductRailProps {
-  title: string
+  /** Omit when the section renders its own heading elsewhere (e.g. a heading + tabs combo above this rail). */
+  title?: string
   emptyCopy: string
   viewAllTo?: string
   products: Product[]
@@ -80,7 +81,7 @@ export function ProductRail({
     <section className={cn(TONE_CLASSES[tone])}>
       <div className={cn("mb-6 flex items-start justify-between gap-4", align === "center" && "relative")}>
         <div className={cn("flex flex-1 flex-col gap-4", align === "center" && "items-center text-center")}>
-          <h2 className="font-heading text-4xl font-semibold text-foreground sm:text-5xl">{title}</h2>
+          {title && <h2 className="font-heading text-4xl font-semibold text-foreground sm:text-5xl">{title}</h2>}
           {tabs}
         </div>
         <div className={cn("flex items-center gap-2", align === "center" && "absolute top-0 right-0")}>

@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Select,
   SelectContent,
@@ -25,6 +26,7 @@ const EMPTY_VALUES: CategoryFormValues = {
   parent_id: null,
   cover_image_url: null,
   sort_order: 0,
+  is_featured: false,
 }
 
 // /admin/categories/new and /admin/categories/:id/edit.
@@ -45,7 +47,7 @@ export function AdminCategoryEditor() {
     }
     supabase
       .from("categories")
-      .select("id, name, slug, parent_id, cover_image_url, sort_order, created_at")
+      .select("id, name, slug, parent_id, cover_image_url, sort_order, is_featured, created_at")
       .eq("id", id)
       .maybeSingle()
       .then(({ data }) => {
@@ -147,6 +149,13 @@ export function AdminCategoryEditor() {
             onChange={(e) => updateField("sort_order", Number(e.target.value))}
           />
         </div>
+        <label className="flex items-center gap-2 text-sm">
+          <Checkbox
+            checked={values.is_featured}
+            onCheckedChange={(checked) => updateField("is_featured", checked === true)}
+          />
+          Featured (shown as a tab in the homepage "Shop by Category" section)
+        </label>
 
         {saveError && (
           <p className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
