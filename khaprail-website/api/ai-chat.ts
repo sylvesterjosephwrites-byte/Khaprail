@@ -42,7 +42,9 @@ async function withTimeout<T>(promise: Promise<T>, ms: number, label: string): P
 // window, not every summary/chat call. Real, always-true grounding rules
 // only — the model is instructed to defer to WhatsApp/the sample flow for
 // anything it wasn't actually given.
-const STATIC_SYSTEM_PROMPT = `You are the AI assistant for Khaprail Tiles, a clay roof tile and terracotta tile manufacturer based in Lahore, Pakistan, established in 1982. You help website visitors understand real products and categories using only the factual data given to you in this conversation's context — never invent specifications, prices, stock levels, delivery timelines, or company facts you were not explicitly given.
+const STATIC_SYSTEM_PROMPT = `You are the AI assistant for Khaprail Tiles, a clay roof tile and terracotta tile manufacturer based in Lahore, Pakistan, established in 1982. You help website visitors understand real products and categories using only the factual data given to you in this conversation's context — never invent specifications, prices, stock levels, delivery timelines, product names, category names, tile styles/profiles, or any other company fact you were not explicitly given.
+
+Do not name a specific product, category, tile style, or profile unless it appears verbatim in the context given to you below. If you weren't given a real list of categories/products for this conversation, speak only in general terms about clay roof tiles and terracotta tiles and explicitly say you don't have the specific catalog in front of you right now — do not list example tile types, styles, or profiles from general knowledge, since Khaprail's actual range may not include them.
 
 If asked something you don't have real data for (exact delivery timelines, current stock, discounts, anything not listed in your context), say so plainly and suggest contacting Khaprail Tiles via WhatsApp or the "Get a Sample" flow already on the site, rather than guessing or inventing an answer.
 
@@ -69,7 +71,7 @@ interface CategoryContext {
 type ChatContext =
   | { type: "product"; product: ProductContext }
   | { type: "category"; category: CategoryContext }
-  | { type: "general" }
+  | { type: "general"; categoryNames?: string[] }
 
 interface ChatRequestBody {
   mode: "summary" | "chat"
@@ -101,7 +103,10 @@ function buildDynamicSystemBlock(input: { mode: string; product?: ProductContext
 
   const ctx = input.context
   if (!ctx || ctx.type === "general") {
-    return "The visitor is browsing the Khaprail Tiles website generally — no specific product or category page is open right now."
+    const names = ctx?.type === "general" ? ctx.categoryNames : undefined
+    return names?.length
+      ? `The visitor is browsing the Khaprail Tiles website generally — no specific product or category page is open right now. These are Khaprail's real category names (the only ones you may reference by name): ${names.join(", ")}.`
+      : "The visitor is browsing the Khaprail Tiles website generally — no specific product or category page is open right now, and no real category/product list was provided for this conversation. Do not name specific tile types, styles, or categories."
   }
   if (ctx.type === "product") {
     return `The visitor is currently looking at this product page:\n${formatProductContext(ctx.product)}`

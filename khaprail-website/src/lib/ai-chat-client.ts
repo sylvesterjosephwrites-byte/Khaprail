@@ -21,7 +21,7 @@ export interface CategoryAiContext {
 export type ChatAiContext =
   | { type: "product"; product: ProductAiContext }
   | { type: "category"; category: CategoryAiContext }
-  | { type: "general" }
+  | { type: "general"; categoryNames?: string[] }
 
 export interface ChatHistoryMessage {
   role: "user" | "assistant"

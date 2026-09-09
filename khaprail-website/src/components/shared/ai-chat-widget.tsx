@@ -4,6 +4,7 @@ import { MessageCircleIcon, XIcon, SendIcon, SparklesIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useProduct } from "@/hooks/use-product"
 import { useCategory } from "@/hooks/use-category"
+import { useCategories } from "@/hooks/use-categories"
 import { useFilterTypes } from "@/hooks/use-filter-types"
 import {
   streamChatReply,
@@ -44,6 +45,7 @@ export function AiChatWidget() {
   const { product } = useProduct(productMatch?.params.slug)
   const { category } = useCategory(categoryMatch?.params.slug)
   const { filterGroups } = useFilterTypes()
+  const { categories } = useCategories()
 
   function buildContext(): ChatAiContext {
     if (productMatch && product) {
@@ -71,7 +73,7 @@ export function AiChatWidget() {
       )
       return { type: "category", category: { name: category.name, filters } }
     }
-    return { type: "general" }
+    return { type: "general", categoryNames: categories.map((c) => c.name) }
   }
 
   function scrollToBottom() {
