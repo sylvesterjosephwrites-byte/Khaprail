@@ -13,6 +13,7 @@ const PRODUCT_DETAIL_COLUMNS = `
   id, name, slug, category_id, description, size, thickness, finish,
   country_of_origin, cover_image_url, is_featured, created_at,
   brand, merchant, sku, availability, manufacturer, price,
+  ai_summary, ai_summary_generated_at,
   categories ( name ),
   product_images ( id, image_url, sort_order ),
   product_attributes ( id, attribute_type, value )

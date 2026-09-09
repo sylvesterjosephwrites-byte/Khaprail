@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom"
 import { SiteHeader } from "@/components/layout/site-header"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { FloatingWhatsAppButton } from "@/components/shared/floating-whatsapp-button"
+import { AiChatWidget } from "@/components/shared/ai-chat-widget"
 import { MobileTabBar } from "@/components/nav/mobile-tab-bar"
 import { MobileDrawerProvider } from "@/lib/mobile-drawer-context"
 
@@ -16,6 +17,7 @@ export function SiteLayout() {
         <Outlet />
         <SiteFooter />
         <FloatingWhatsAppButton />
+        <AiChatWidget />
         <MobileTabBar />
       </div>
     </MobileDrawerProvider>

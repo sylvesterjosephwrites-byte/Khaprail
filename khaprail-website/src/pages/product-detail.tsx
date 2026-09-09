@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Gallery } from "@/components/pdp/gallery"
 import { AboutItemAccordion } from "@/components/pdp/about-item-accordion"
+import { AiSummaryCard } from "@/components/pdp/ai-summary-card"
 import { CompareTable } from "@/components/pdp/compare-table"
 import { SampleRequestDialog } from "@/components/pdp/sample-request-dialog"
 import { ProductRail } from "@/components/shared/product-rail"
@@ -98,6 +99,8 @@ export function ProductDetail() {
           </div>
 
           <AboutItemAccordion product={product} />
+
+          {product.ai_summary && <AiSummaryCard summary={product.ai_summary} />}
         </div>
       </div>
 

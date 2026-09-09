@@ -55,6 +55,8 @@ export interface ProductDetail {
   availability: string | null
   manufacturer: string | null
   price: number | null
+  ai_summary: string | null
+  ai_summary_generated_at: string | null
   product_images: ProductImage[]
   product_attributes: ProductAttributeRow[]
 }

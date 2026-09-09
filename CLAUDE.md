@@ -26,6 +26,7 @@ It is a catalog + lead-generation site (WhatsApp sample requests, spec-sheet dow
 - @react-pdf/renderer for downloadable spec sheets
 - Framer Motion for animation
 - React Router
+- Anthropic API (Claude Haiku 4.5) via a Vercel serverless function (`khaprail-website/api/ai-chat.ts`) for cached PDP summaries + the site-wide chat widget — see 00-PROGRESS.md's AI chatbot batch. The API key is server-only; the client never talks to Anthropic directly.
 
 ## Initial setup commands
 

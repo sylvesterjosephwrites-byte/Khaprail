@@ -13,8 +13,10 @@ import {
 } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useCategories } from "@/hooks/use-categories"
+import { useAuth } from "@/lib/auth-context"
 import { supabase } from "@/lib/supabase"
 import { saveProduct, type ProductFormValues, type ImageDraft, type AttributeDraft } from "@/lib/products-admin"
+import { generateProductSummary } from "@/lib/ai-chat-client"
 import { flattenCategoryTree } from "@/lib/category-tree"
 import { getErrorMessage, slugify } from "@/lib/utils"
 
@@ -51,6 +53,7 @@ interface FetchedProduct extends ProductFormValues {
 export function AdminProductEditor() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const { session } = useAuth()
   const { categories, isLoading: categoriesLoading } = useCategories()
   const categoryRows = flattenCategoryTree(categories)
 
@@ -61,6 +64,15 @@ export function AdminProductEditor() {
   const isLoading = isLoadingProduct || categoriesLoading
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+
+  // AI summary (products.ai_summary) is deliberately NOT part of
+  // `ProductFormValues`/`saveProduct` — it's only ever written by the
+  // "Generate AI Summary" button below, never on a plain form save, so
+  // editing an unrelated field never silently burns an API call.
+  const [aiSummary, setAiSummary] = useState<string | null>(null)
+  const [aiSummaryGeneratedAt, setAiSummaryGeneratedAt] = useState<string | null>(null)
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false)
+  const [summaryError, setSummaryError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!id || !supabase) {
@@ -73,6 +85,7 @@ export function AdminProductEditor() {
         `name, slug, category_id, description, size, thickness, finish,
          country_of_origin, cover_image_url, is_featured,
          brand, merchant, sku, availability, manufacturer, price,
+         ai_summary, ai_summary_generated_at,
          product_images ( image_url ),
          product_attributes ( attribute_type, value )`
       )
@@ -80,15 +93,57 @@ export function AdminProductEditor() {
       .maybeSingle()
       .then(({ data }) => {
         if (data) {
-          const fetched = data as unknown as FetchedProduct
-          const { product_images, product_attributes, ...formValues } = fetched
+          const fetched = data as unknown as FetchedProduct & {
+            ai_summary: string | null
+            ai_summary_generated_at: string | null
+          }
+          const { product_images, product_attributes, ai_summary, ai_summary_generated_at, ...formValues } = fetched
           setValues(formValues)
           setImages(product_images.map((img) => ({ image_url: img.image_url })))
           setAttributes(product_attributes)
+          setAiSummary(ai_summary)
+          setAiSummaryGeneratedAt(ai_summary_generated_at)
         }
         setIsLoadingProduct(false)
       })
   }, [id])
+
+  async function handleGenerateSummary() {
+    if (!id || !supabase || !session) return
+    setIsGeneratingSummary(true)
+    setSummaryError(null)
+    try {
+      const material = attributes.find((a) => a.attribute_type.toLowerCase() === "material")?.value
+      const applications = attributes
+        .filter((a) => a.attribute_type.toLowerCase() === "application")
+        .map((a) => a.value)
+      const summary = await generateProductSummary(
+        {
+          name: values.name,
+          material,
+          finish: values.finish,
+          size: values.size,
+          thickness: values.thickness,
+          country_of_origin: values.country_of_origin,
+          price: values.price,
+          applications,
+        },
+        session.access_token
+      )
+      const generatedAt = new Date().toISOString()
+      const { error } = await supabase
+        .from("products")
+        .update({ ai_summary: summary, ai_summary_generated_at: generatedAt })
+        .eq("id", id)
+      if (error) throw error
+      setAiSummary(summary)
+      setAiSummaryGeneratedAt(generatedAt)
+    } catch (err) {
+      setSummaryError(getErrorMessage(err, "Failed to generate summary"))
+    } finally {
+      setIsGeneratingSummary(false)
+    }
+  }
 
   function updateField<K extends keyof ProductFormValues>(key: K, value: ProductFormValues[K]) {
     setValues((prev) => ({ ...prev, [key]: value }))
@@ -269,6 +324,35 @@ export function AdminProductEditor() {
             </div>
           )}
         />
+
+        {id && (
+          <section className="flex flex-col gap-3 rounded-lg border border-border p-4">
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-lg font-medium">AI Summary</h2>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isGeneratingSummary}
+                onClick={() => void handleGenerateSummary()}
+              >
+                {isGeneratingSummary ? "Generating..." : "Generate AI Summary"}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Only runs when clicked — saving the form above never regenerates this. Uses the Name/Finish/Size/
+              Thickness/Country of Origin/Price fields and any "material"/"application" attributes above, so save
+              those first if you've just changed them.
+            </p>
+            {aiSummaryGeneratedAt && (
+              <p className="text-xs text-muted-foreground">
+                Last generated {new Date(aiSummaryGeneratedAt).toLocaleString()}
+                {" — regenerate if the specs above have changed since."}
+              </p>
+            )}
+            {summaryError && <p className="text-sm text-destructive">{summaryError}</p>}
+            {aiSummary && <p className="rounded-md bg-muted p-3 text-sm text-foreground">{aiSummary}</p>}
+          </section>
+        )}
 
         {saveError && (
           <p className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
