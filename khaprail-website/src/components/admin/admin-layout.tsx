@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { label: "Blog Posts", to: "/admin/blog" },
   { label: "Lifestyle Tiles", to: "/admin/lifestyle-tiles" },
   { label: "Offer Cards", to: "/admin/offer-cards" },
+  { label: "Trending Tiles", to: "/admin/trending-tiles" },
   { label: "Sample Inquiries", to: "/admin/sample-inquiries" },
 ] as const
 

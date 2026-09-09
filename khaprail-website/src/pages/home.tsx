@@ -8,6 +8,7 @@ import { TrendingCategoriesGrid } from "@/components/home/trending-categories-gr
 import { CategoryShowcase } from "@/components/home/category-showcase"
 import { LifestyleTilesSection } from "@/components/home/lifestyle-tiles-section"
 import { ShopByCategorySection } from "@/components/home/shop-by-category-section"
+import { TrendingTilesSection } from "@/components/home/trending-tiles-section"
 import { NewArrivalsSection } from "@/components/home/new-arrivals-section"
 import { VideosSection } from "@/components/home/videos-section"
 import { DownloadCta } from "@/components/home/download-cta"
@@ -35,7 +36,10 @@ import { DownloadCta } from "@/components/home/download-cta"
 // capabilities (free samples/bulk pricing/delivery/new-customer welcome),
 // never a percentage-off discount, since no live promotion is confirmed;
 // fully admin-editable so real terms can replace the placeholder wording
-// later with no code change — see 00-PROGRESS.md.
+// later with no code change — see 00-PROGRESS.md. Trending in Tiles (fixed
+// 4-slot bento grid) was added after Shop by Category for the same
+// reason — a new, admin-curated section, not in the spec's confirmed
+// order, kept alongside everything else rather than replacing it.
 export function Home() {
   return (
     <main className="flex-1">
@@ -48,6 +52,7 @@ export function Home() {
       <CategoryShowcase />
       <LifestyleTilesSection />
       <ShopByCategorySection />
+      <TrendingTilesSection />
       <NewArrivalsSection />
       <VideosSection />
       <DownloadCta />

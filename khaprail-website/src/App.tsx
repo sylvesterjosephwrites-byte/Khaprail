@@ -27,6 +27,8 @@ import { AdminLifestyleTilesList } from "@/pages/admin/lifestyle-tiles-list"
 import { AdminLifestyleTileEditor } from "@/pages/admin/lifestyle-tile-editor"
 import { AdminOfferCardsList } from "@/pages/admin/offer-cards-list"
 import { AdminOfferCardEditor } from "@/pages/admin/offer-card-editor"
+import { AdminTrendingTilesList } from "@/pages/admin/trending-tiles-list"
+import { AdminTrendingTileEditor } from "@/pages/admin/trending-tile-editor"
 import { AuthProvider } from "@/lib/auth-context"
 import { ProtectedRoute } from "@/components/admin/protected-route"
 import { AdminLayout } from "@/components/admin/admin-layout"
@@ -76,6 +78,9 @@ function App() {
               <Route path="/admin/offer-cards" element={<AdminOfferCardsList />} />
               <Route path="/admin/offer-cards/new" element={<AdminOfferCardEditor />} />
               <Route path="/admin/offer-cards/:id/edit" element={<AdminOfferCardEditor />} />
+              <Route path="/admin/trending-tiles" element={<AdminTrendingTilesList />} />
+              <Route path="/admin/trending-tiles/new" element={<AdminTrendingTileEditor />} />
+              <Route path="/admin/trending-tiles/:id/edit" element={<AdminTrendingTileEditor />} />
             </Route>
           </Route>
         </Routes>
