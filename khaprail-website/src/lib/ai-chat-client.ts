@@ -28,6 +28,21 @@ export interface ChatHistoryMessage {
   content: string
 }
 
+/** A real row returned by the backend's `search_products` tool call — never model-generated (see api/ai-chat.ts). */
+export interface ChatProductCard {
+  name: string
+  slug: string
+  price: number | null
+  cover_image_url: string | null
+  category_name: string | null
+}
+
+export interface ChatReplyResult {
+  products: ChatProductCard[]
+  /** Real `filter_types` values only — empty until Sylvester populates that table (see api/ai-chat.ts). */
+  chips: string[]
+}
+
 const SESSION_STORAGE_KEY = "khaprail-chat-session-id"
 
 /** A persistent (localStorage-backed) per-browser id used only for chat rate-limit bookkeeping — not an auth identity. */
@@ -63,7 +78,19 @@ export async function generateProductSummary(
 
 export class ChatRateLimitError extends Error {}
 
-/** Streams a chat reply, invoking `onChunk` as text arrives. Throws `ChatRateLimitError` with the friendly fallback message when the visitor has hit the cap. */
+// NUL never appears in real assistant text — the backend appends it once
+// before the structured product-card/chip JSON payload (see api/ai-chat.ts's
+// `DATA_DELIMITER`), so splitting on it is unambiguous regardless of how the
+// stream happens to chunk.
+const DATA_DELIMITER = String.fromCharCode(0)
+
+/**
+ * Streams a chat reply, invoking `onChunk` with prose text as it arrives,
+ * and resolves with any real product cards / quick-refine chips the
+ * backend's `search_products` tool call turned up this turn (empty arrays
+ * for an ordinary text-only reply). Throws `ChatRateLimitError` with the
+ * friendly fallback message when the visitor has hit the cap.
+ */
 export async function streamChatReply(
   options: {
     message: string
@@ -71,7 +98,7 @@ export async function streamChatReply(
     context: ChatAiContext
   },
   onChunk: (text: string) => void
-): Promise<void> {
+): Promise<ChatReplyResult> {
   const res = await fetch("/api/ai-chat", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -97,9 +124,35 @@ export async function streamChatReply(
 
   const reader = res.body.getReader()
   const decoder = new TextDecoder()
+  let sawDelimiter = false
+  let trailingJson = ""
   while (true) {
     const { done, value } = await reader.read()
     if (done) break
-    onChunk(decoder.decode(value, { stream: true }))
+    const chunk = decoder.decode(value, { stream: true })
+    if (!sawDelimiter) {
+      const delimiterIndex = chunk.indexOf(DATA_DELIMITER)
+      if (delimiterIndex === -1) {
+        onChunk(chunk)
+      } else {
+        sawDelimiter = true
+        const before = chunk.slice(0, delimiterIndex)
+        if (before) onChunk(before)
+        trailingJson += chunk.slice(delimiterIndex + 1)
+      }
+    } else {
+      trailingJson += chunk
+    }
+  }
+
+  if (!trailingJson) return { products: [], chips: [] }
+  try {
+    const parsed = JSON.parse(trailingJson)
+    return {
+      products: Array.isArray(parsed.products) ? parsed.products : [],
+      chips: Array.isArray(parsed.chips) ? parsed.chips : [],
+    }
+  } catch {
+    return { products: [], chips: [] }
   }
 }
