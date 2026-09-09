@@ -252,16 +252,26 @@ async function callAnthropic(options: {
   })
 }
 
-// Top-level safety net — a hang or uncaught throw anywhere below would
-// otherwise leave the client waiting forever with no response at all
-// (this is exactly what happened during live QA before this was added:
-// an unguarded rate-limit-check failure hung the whole request).
-export default async function handler(request: Request): Promise<Response> {
-  try {
-    return await handleRequest(request)
-  } catch (err) {
-    return Response.json({ error: "unhandled_error", detail: (err as Error).message }, { status: 500 })
-  }
+// Vercel's convention for a plain (non-Next.js) project is a default
+// export whose `fetch` METHOD handles the request — `export default async
+// function handler(request)` (a bare function) is the wrong shape and was
+// the actual cause of every request hanging with zero bytes ever sent
+// back, confirmed live: even a plain GET (which returns synchronously,
+// before touching Supabase or Anthropic) hung identically, and curl -v
+// showed the request fully sent with the connection open but nothing ever
+// received. https://vercel.com/docs/functions/functions-api-reference
+//
+// Also wraps every request in a top-level try/catch — a hang or uncaught
+// throw anywhere below would otherwise leave the client waiting forever
+// with no response at all.
+export default {
+  async fetch(request: Request): Promise<Response> {
+    try {
+      return await handleRequest(request)
+    } catch (err) {
+      return Response.json({ error: "unhandled_error", detail: (err as Error).message }, { status: 500 })
+    }
+  },
 }
 
 async function handleRequest(request: Request): Promise<Response> {
