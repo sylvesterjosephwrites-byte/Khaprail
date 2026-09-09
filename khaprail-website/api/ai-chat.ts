@@ -7,7 +7,10 @@ import { createClient } from "@supabase/supabase-js"
 // 00-PROGRESS.md for the manual setup steps (both keys must be added in
 // the Vercel dashboard before this actually works).
 
-export const config = { runtime: "nodejs" }
+// No `config`/`runtime` export — Node.js is already the default for a
+// plain (non-Next.js) Vercel Function; `{ runtime: "nodejs" }` isn't a
+// recognized value for this convention (only `"edge"` is a real opt-in
+// here) and risked being silently misinterpreted.
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
 const MODEL = "claude-haiku-4-5-20251001"
@@ -15,6 +18,23 @@ const CHAT_MAX_TOKENS = 300
 const SUMMARY_MAX_TOKENS = 200
 const RATE_LIMIT_PER_HOUR = 20
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000
+// Nothing in this function should ever hang past these — a stuck Supabase
+// or Anthropic call previously caused the whole request to hang forever
+// with no response, discovered by actually testing chat live in-browser.
+const RATE_LIMIT_CHECK_TIMEOUT_MS = 5000
+const ANTHROPIC_FETCH_TIMEOUT_MS = 45000
+
+async function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout>
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms)
+  })
+  try {
+    return await Promise.race([promise, timeout])
+  } finally {
+    clearTimeout(timer!)
+  }
+}
 
 // Shared, cacheable core instructions — identical across every request
 // regardless of mode/page, so Anthropic's prompt caching (cache_control on
@@ -120,17 +140,31 @@ async function checkAndRecordRateLimit(sessionId: string, ip: string): Promise<b
   const client = getServiceClient()
   if (!client) return false
 
-  const since = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString()
-  const { count } = await client
-    .from("chat_usage")
-    .select("*", { count: "exact", head: true })
-    .eq("session_id", sessionId)
-    .gte("created_at", since)
+  // Any failure here (network hiccup, bad key, slow Supabase) fails
+  // closed — chat refused rather than silently unmetered — but never
+  // hangs the whole request past `RATE_LIMIT_CHECK_TIMEOUT_MS`.
+  try {
+    return await withTimeout(
+      (async () => {
+        const since = new Date(Date.now() - RATE_LIMIT_WINDOW_MS).toISOString()
+        const { count, error: countError } = await client
+          .from("chat_usage")
+          .select("*", { count: "exact", head: true })
+          .eq("session_id", sessionId)
+          .gte("created_at", since)
 
-  if ((count ?? 0) >= RATE_LIMIT_PER_HOUR) return false
+        if (countError) throw countError
+        if ((count ?? 0) >= RATE_LIMIT_PER_HOUR) return false
 
-  await client.from("chat_usage").insert({ session_id: sessionId, ip_address: ip })
-  return true
+        await client.from("chat_usage").insert({ session_id: sessionId, ip_address: ip })
+        return true
+      })(),
+      RATE_LIMIT_CHECK_TIMEOUT_MS,
+      "Rate limit check"
+    )
+  } catch {
+    return false
+  }
 }
 
 async function verifyAdminToken(authHeader: string | null): Promise<boolean> {
@@ -138,9 +172,17 @@ async function verifyAdminToken(authHeader: string | null): Promise<boolean> {
   const url = process.env.VITE_SUPABASE_URL
   const publishableKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY
   if (!url || !publishableKey) return false
-  const client = createClient(url, publishableKey)
-  const { data, error } = await client.auth.getUser(authHeader.slice("Bearer ".length))
-  return !error && !!data.user
+  try {
+    const client = createClient(url, publishableKey)
+    const { data, error } = await withTimeout(
+      client.auth.getUser(authHeader.slice("Bearer ".length)),
+      RATE_LIMIT_CHECK_TIMEOUT_MS,
+      "Admin token check"
+    )
+    return !error && !!data.user
+  } catch {
+    return false
+  }
 }
 
 function streamAnthropicText(anthropicResponse: Response): ReadableStream<Uint8Array> {
@@ -188,6 +230,9 @@ async function callAnthropic(options: {
     throw new Error("ANTHROPIC_API_KEY is not configured on the server yet.")
   }
 
+  // Bounds how long we wait for Anthropic to start responding (headers),
+  // not the full streamed duration — `fetch()` resolves once the response
+  // begins, before the body is fully read.
   return fetch(ANTHROPIC_URL, {
     method: "POST",
     headers: {
@@ -203,10 +248,23 @@ async function callAnthropic(options: {
       messages: options.messages,
       stream: options.stream,
     }),
+    signal: AbortSignal.timeout(ANTHROPIC_FETCH_TIMEOUT_MS),
   })
 }
 
+// Top-level safety net — a hang or uncaught throw anywhere below would
+// otherwise leave the client waiting forever with no response at all
+// (this is exactly what happened during live QA before this was added:
+// an unguarded rate-limit-check failure hung the whole request).
 export default async function handler(request: Request): Promise<Response> {
+  try {
+    return await handleRequest(request)
+  } catch (err) {
+    return Response.json({ error: "unhandled_error", detail: (err as Error).message }, { status: 500 })
+  }
+}
+
+async function handleRequest(request: Request): Promise<Response> {
   if (request.method !== "POST") {
     return Response.json({ error: "method_not_allowed" }, { status: 405 })
   }
