@@ -30,6 +30,8 @@ interface ProductRailProps {
   align?: "left" | "center"
   /** Optional row rendered directly under the title (e.g. Best Sellers' category tabs) — opt-in per usage, not part of the shared header layout otherwise. */
   tabs?: ReactNode
+  /** Hide the left/right scroll-arrow buttons — for sections like Shop by Category where the arrows sit right next to a tab row and read as if they belonged to the tabs. The card row itself stays scrollable via touch/trackpad/keyboard. */
+  hideArrows?: boolean
 }
 
 const SKELETON_COUNT = 4
@@ -67,6 +69,7 @@ export function ProductRail({
   tone = "none",
   align = "left",
   tabs,
+  hideArrows,
 }: ProductRailProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const hasProducts = !isLoading && !error && products.length >= minCount
@@ -90,7 +93,7 @@ export function ProductRail({
               View All
             </Link>
           )}
-          {hasProducts && (
+          {hasProducts && !hideArrows && (
             <div className="hidden gap-1 sm:flex">
               <Button
                 type="button"

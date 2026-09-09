@@ -49,6 +49,7 @@ export function ShopByCategorySection() {
         products={products}
         isLoading={tabsLoading || !activeCategory || productsLoading}
         error={productsError}
+        hideArrows
         tabs={
           tabsLoading ? (
             <div className="flex w-full gap-2">

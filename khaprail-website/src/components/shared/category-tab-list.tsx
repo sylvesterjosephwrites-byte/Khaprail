@@ -15,14 +15,18 @@ interface CategoryTabListProps {
 // just restyled from a segmented control into terracotta pill buttons.
 // `activateOnFocus` makes arrow-key movement select immediately (matching a
 // click) rather than requiring a separate Enter/Space press, per the
-// "tab switching should feel instant" requirement.
+// "tab switching should feel instant" requirement. Plain flex row, no
+// horizontal scroll/carousel — `h-auto!` is required (not just `h-auto`)
+// because TabsList's own base classes set a fixed `h-8` behind a
+// `group-data-horizontal/tabs:` modifier that otherwise wins the cascade,
+// clipping the taller pills and causing a spurious vertical scrollbar.
 export function CategoryTabList({ categories, activeId, onSelect }: CategoryTabListProps) {
   return (
     <Tabs value={activeId} onValueChange={(value) => onSelect(value as string)} className="w-full">
       <TabsList
         activateOnFocus
         aria-label="Product categories"
-        className="h-auto w-full justify-start gap-2 overflow-x-auto rounded-none bg-transparent p-0 scrollbar-fade"
+        className="h-auto! w-full flex-wrap justify-start gap-2 overflow-visible rounded-none bg-transparent p-0"
       >
         {categories.map((category) => (
           <TabsTrigger
