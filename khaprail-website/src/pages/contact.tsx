@@ -1,10 +1,12 @@
+import { ClockIcon, MailIcon, MapPinIcon, PhoneIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { buildWhatsAppUrl, WHATSAPP_DISPLAY_NUMBER } from "@/lib/whatsapp"
+import { buildWhatsAppUrl } from "@/lib/whatsapp"
+import { CONTACT_EMAIL, CONTACT_HOURS, CONTACT_LOCATIONS, CONTACT_PHONES } from "@/lib/contact-info"
 
-// /contact (01-SITE-MAP.md). WhatsApp is the site's one confirmed real
-// contact channel (see src/lib/whatsapp.ts) — no email or street address is
-// listed here since neither has been supplied yet (CLAUDE.md "never
-// fabricate data"); flag to Sylvester if he wants those added.
+// /contact (01-SITE-MAP.md). WhatsApp is still the fastest way to reach us,
+// but the real email/phone/locations/hours (2026-09-10, see 00-PROGRESS.md
+// batch 33) are now shown here too, kept in sync with the footer via one
+// shared `lib/contact-info.ts` source of truth.
 export function Contact() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center gap-6 px-4 py-24 text-center sm:px-6">
@@ -23,9 +25,41 @@ export function Contact() {
       >
         Message Us on WhatsApp
       </Button>
-      <p className="text-sm text-muted-foreground">
-        {WHATSAPP_DISPLAY_NUMBER} · Est. 1982 · Lahore, Pakistan
-      </p>
+
+      <div className="mt-6 flex w-full flex-col items-center gap-3 text-base text-muted-foreground">
+        <a href={`mailto:${CONTACT_EMAIL}`} className="flex items-center gap-2 hover:text-foreground">
+          <MailIcon className="size-4 shrink-0" aria-hidden="true" />
+          {CONTACT_EMAIL}
+        </a>
+        {CONTACT_PHONES.map((phone) => (
+          <a key={phone.href} href={phone.href} className="flex items-center gap-2 hover:text-foreground">
+            <PhoneIcon className="size-4 shrink-0" aria-hidden="true" />
+            {phone.display}
+          </a>
+        ))}
+        <div className="flex items-start gap-2">
+          <ClockIcon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+          <div className="flex flex-col text-left">
+            {CONTACT_HOURS.map((row) => (
+              <span key={row.days}>
+                {row.days}: {row.hours}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 grid w-full gap-6 text-left sm:grid-cols-2">
+        {CONTACT_LOCATIONS.map((location) => (
+          <div key={location.label} className="flex items-start gap-2 text-sm text-muted-foreground">
+            <MapPinIcon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+            <div>
+              <p className="font-medium text-foreground">{location.label}</p>
+              <p>{location.address}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </main>
   )
 }

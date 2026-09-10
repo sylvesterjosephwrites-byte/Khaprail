@@ -1,4 +1,5 @@
 import { Outlet } from "react-router-dom"
+import { SubBrandBar } from "@/components/layout/sub-brand-bar"
 import { SiteHeader } from "@/components/layout/site-header"
 import { SiteFooter } from "@/components/layout/site-footer"
 import { FloatingWhatsAppButton } from "@/components/shared/floating-whatsapp-button"
@@ -15,6 +16,7 @@ export function SiteLayout() {
     <MobileDrawerProvider>
       <ChatPanelProvider>
         <div className="flex min-h-svh flex-col pb-20 lg:pb-0">
+          <SubBrandBar />
           <SiteHeader />
           <Outlet />
           <SiteFooter />

@@ -1,7 +1,7 @@
 // Khaprail Tiles' WhatsApp Business number — public contact info, not a secret.
-const WHATSAPP_NUMBER = "923016878978"
+const WHATSAPP_NUMBER = "923004617715"
 
-export const WHATSAPP_DISPLAY_NUMBER = "+92 301 6878 978"
+export const WHATSAPP_DISPLAY_NUMBER = "+92 300 4617715"
 
 export const DEFAULT_WHATSAPP_MESSAGE = "Hi, I'm interested in Khaprail's roof tiles."
 
