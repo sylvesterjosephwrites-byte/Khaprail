@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
+import { findProductIdsMatchingQuery } from "@/lib/product-search"
 import type { Product } from "@/types/product"
 import type { ActiveFilters, SortOption } from "@/lib/product-filters"
 
@@ -18,9 +19,17 @@ const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_
  * OR-within-a-filter-type semantics against `product_attributes`
  * (04-PRODUCT-LISTING-FILTERS.md). With no active filters, returns every
  * product sorted per `sort`. Pass `categoryId` to scope to one category
- * (11-CATEGORY-LISTING-SPEC.md's listing template), exact match only.
+ * (11-CATEGORY-LISTING-SPEC.md's listing template), exact match only. Pass
+ * `searchQuery` (the /search page's `?q=`) to additionally require a real
+ * name/category match — combined with any active filters via the same
+ * id-intersection approach, not a second/competing query path.
  */
-export function useProducts(filters: ActiveFilters, sort: SortOption, categoryId?: string | null): UseProductsResult {
+export function useProducts(
+  filters: ActiveFilters,
+  sort: SortOption,
+  categoryId?: string | null,
+  searchQuery?: string
+): UseProductsResult {
   const [products, setProducts] = useState<Product[]>([])
   const [facetCounts, setFacetCounts] = useState<Record<string, Record<string, number>>>({})
   const [isLoading, setIsLoading] = useState(() => supabase !== null)
@@ -73,12 +82,20 @@ export function useProducts(filters: ActiveFilters, sort: SortOption, categoryId
         if (matchingIds.size === 0) break
       }
 
+      let searchIds: Set<string> | null = null
+      if (searchQuery?.trim()) {
+        searchIds = await findProductIdsMatchingQuery(client, searchQuery)
+      }
+
       let query = client.from("products").select(PRODUCT_COLUMNS)
       if (categoryId) {
         query = query.eq("category_id", categoryId)
       }
       if (matchingIds !== null) {
         query = query.in("id", [...matchingIds])
+      }
+      if (searchIds !== null) {
+        query = query.in("id", [...searchIds])
       }
       query =
         sort === "name-asc"
@@ -124,7 +141,7 @@ export function useProducts(filters: ActiveFilters, sort: SortOption, categoryId
     return () => {
       cancelled = true
     }
-  }, [filtersKey, sort, categoryId])
+  }, [filtersKey, sort, categoryId, searchQuery])
 
   return { products, facetCounts, isLoading, error }
 }

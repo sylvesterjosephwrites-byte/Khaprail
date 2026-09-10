@@ -4,6 +4,7 @@ import { Home } from "@/pages/home"
 import { CategoriesIndex } from "@/pages/categories-index"
 import { CategoryDetail } from "@/pages/category-detail"
 import { ProductsListing } from "@/pages/products-listing"
+import { SearchResults } from "@/pages/search-results"
 import { ProductDetail } from "@/pages/product-detail"
 import { NewArrivals } from "@/pages/new-arrivals"
 import { BestSellers } from "@/pages/best-sellers"
@@ -45,6 +46,7 @@ function App() {
             <Route path="/categories/:slug" element={<CategoryDetail />} />
             <Route path="/products" element={<ProductsListing />} />
             <Route path="/products/:slug" element={<ProductDetail />} />
+            <Route path="/search" element={<SearchResults />} />
             <Route path="/new-arrivals" element={<NewArrivals />} />
             <Route path="/best-sellers" element={<BestSellers />} />
             <Route path="/videos" element={<Videos />} />

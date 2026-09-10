@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { CategoriesMegaMenu } from "@/components/nav/categories-mega-menu"
 import { MobileNav } from "@/components/nav/mobile-nav"
+import { SiteSearch } from "@/components/nav/site-search"
 import { NAV_LINKS } from "@/lib/nav-links"
 import { useCategories } from "@/hooks/use-categories"
 import { buildWhatsAppUrl, DEFAULT_WHATSAPP_MESSAGE } from "@/lib/whatsapp"
@@ -63,8 +64,8 @@ export function SiteHeader() {
       </div>
 
       <div className="hidden bg-navy lg:block">
-        <div className="mx-auto flex h-12 max-w-7xl items-center px-4 sm:px-6">
-          <NavigationMenu className="max-w-none flex-1">
+        <div className="mx-auto flex h-12 max-w-7xl items-center gap-4 px-4 sm:px-6">
+          <NavigationMenu className="max-w-none">
             <NavigationMenuList className="gap-3">
               <CategoriesMegaMenu
                 categories={categories}
@@ -81,6 +82,7 @@ export function SiteHeader() {
               ))}
             </NavigationMenuList>
           </NavigationMenu>
+          <SiteSearch />
         </div>
       </div>
     </header>

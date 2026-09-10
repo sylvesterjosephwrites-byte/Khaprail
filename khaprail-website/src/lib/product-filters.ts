@@ -7,10 +7,14 @@ export type ActiveFilters = Record<string, string[]>
 
 export type SortOption = "newest" | "name-asc"
 
-export function parseFiltersFromSearchParams(searchParams: URLSearchParams): ActiveFilters {
+// `exclude` covers real non-filter query keys a given page adds on top of
+// the shared filter/sort scheme — `/search`'s `?q=` search term, so it
+// isn't misread as a fake attribute filter type (same class of bug this
+// project already hit once with the mobile filters drawer's hash state).
+export function parseFiltersFromSearchParams(searchParams: URLSearchParams, exclude: string[] = []): ActiveFilters {
   const filters: ActiveFilters = {}
   for (const [key, rawValue] of searchParams.entries()) {
-    if (key === "sort") continue
+    if (key === "sort" || exclude.includes(key)) continue
     const values = rawValue.split(",").filter(Boolean)
     if (values.length > 0) filters[key] = values
   }
