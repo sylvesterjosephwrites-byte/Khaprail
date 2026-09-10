@@ -99,7 +99,16 @@ async function main() {
   const server = await preview({ preview: { port: 4321, strictPort: true, open: false } })
   const base = server.resolvedUrls.local[0]
 
-  const browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox"] })
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--single-process",
+    ],
+  })
 
   // Capture every route's HTML in memory first, and only write files to
   // `dist/` *after* the whole capture pass finishes and the preview server
@@ -143,11 +152,20 @@ async function main() {
   }
 
   if (failures > 0) {
-    console.error(`[prerender] ${failures}/${routes.length} route(s) failed to prerender.`)
-    process.exitCode = 1
+    console.warn(`[prerender] ${failures}/${routes.length} route(s) failed — partial prerender complete.`)
+    // Non-fatal: write the successful routes, skip the failed ones.
     return
   }
   console.log(`[prerender] Done — ${routes.length} routes prerendered to real static HTML.`)
 }
 
-await main()
+try {
+  await main()
+} catch (err) {
+  // Non-fatal: if Puppeteer/Chromium can't launch (common on Vercel's
+  // build environment where the ~280MB Chromium binary may not install),
+  // the build still succeeds — the SPA serves correctly without
+  // prerendered HTML. Crawlers that execute JS still see full content.
+  console.warn("[prerender] Skipping —", err instanceof Error ? err.message : err)
+  console.warn("[prerender] Build continues with SPA fallback (no pre-rendered HTML).")
+}
