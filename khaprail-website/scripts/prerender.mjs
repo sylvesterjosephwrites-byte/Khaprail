@@ -24,6 +24,16 @@
 // job, and re-running this same script (which happens automatically on
 // every build) is what will bake those in once Batch C adds them.
 
+// Skip prerendering on Vercel — Puppeteer's Chromium (~280MB) can't
+// launch in Vercel's build sandbox, and the download attempt alone adds
+// 60-90s of wasted build time before timing out. The SPA serves correctly
+// without pre-rendered HTML; Google renders JS natively.
+if (process.env.VERCEL) {
+  console.log("[prerender] Skipping — Vercel build detected (VERCEL env set).")
+  console.log("[prerender] Run `node scripts/prerender.mjs` locally to generate static HTML.")
+  process.exit(0)
+}
+
 import { preview } from "vite"
 import puppeteer from "puppeteer"
 import { createClient } from "@supabase/supabase-js"
