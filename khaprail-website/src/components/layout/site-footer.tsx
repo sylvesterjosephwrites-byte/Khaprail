@@ -77,9 +77,14 @@ export function SiteFooter() {
           <nav className="flex flex-col gap-2 text-sm text-navy-foreground/70">
             {SUB_BRANDS.map((brand) =>
               brand.isCurrent ? (
-                <span key={brand.name} aria-current="page" className="font-medium text-navy-foreground">
+                <a
+                  key={brand.name}
+                  href={brand.url}
+                  aria-current="page"
+                  className="font-medium text-navy-foreground hover:underline"
+                >
                   {brand.name}
-                </span>
+                </a>
               ) : (
                 <a
                   key={brand.name}

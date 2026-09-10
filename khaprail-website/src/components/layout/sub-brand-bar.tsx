@@ -17,9 +17,13 @@ export function SubBrandBar() {
           <span key={brand.name} className="flex items-center gap-1.5">
             {index > 0 && <span aria-hidden="true">·</span>}
             {brand.isCurrent ? (
-              <span aria-current="page" className="font-semibold text-foreground">
+              <a
+                href={brand.url}
+                aria-current="page"
+                className="font-semibold text-foreground hover:underline outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-sm"
+              >
                 {brand.name}
-              </span>
+              </a>
             ) : (
               <a
                 href={brand.url}

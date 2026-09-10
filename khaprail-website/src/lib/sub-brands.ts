@@ -12,5 +12,5 @@ export interface SubBrand {
 // `our-brands-footer-section.tsx`.
 export const SUB_BRANDS: SubBrand[] = [
   { name: "PAKTILES.COM", url: "https://paktiles.com", isCurrent: false },
-  { name: "Khaprail Tiles", url: "/", isCurrent: true },
+  { name: "Khaprail Tiles", url: "https://khaprailtiles.pk", isCurrent: false },
 ]

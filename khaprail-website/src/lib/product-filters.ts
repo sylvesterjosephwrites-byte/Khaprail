@@ -35,12 +35,20 @@ export function filtersToSearchParams(filters: ActiveFilters, sort: SortOption):
   return params
 }
 
-// Display order for the categories named in 04-PRODUCT-LISTING-FILTERS.md —
-// shared by the desktop `FilterBar` and the mobile `MobileFiltersDrawer` so
-// the two surfaces never drift. The values within each category are never
-// hardcoded (they come from the admin-editable `filter_types` table), only
-// this category ordering is.
-const FILTER_TYPE_ORDER = ["color", "material", "size", "shape", "roof"]
+// Display order for filter facets — shared by the desktop `FilterBar` and the
+// mobile `MobileFiltersDrawer` so the two surfaces never drift. The values
+// within each category are never hardcoded (they come from the admin-editable
+// `filter_types` table); only this top-level facet ordering is.
+const FILTER_TYPE_ORDER = [
+  "type",
+  "pattern",
+  "material",
+  "finish",
+  "color",
+  "size",
+  "suitability",
+  "application",
+]
 
 export function orderFilterTypes(filterTypes: string[]): string[] {
   return [...filterTypes].sort((a, b) => {
