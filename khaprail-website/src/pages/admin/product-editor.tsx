@@ -31,6 +31,8 @@ const EMPTY_VALUES: ProductFormValues = {
 interface FetchedProduct extends ProductFormValues {
   product_images: { image_url: string }[]
   product_attributes: { attribute_type: string; value: string }[]
+  ai_summary: string | null
+  ai_summary_generated_at: string | null
 }
 
 // /admin/products/new and /admin/products/:id/edit
@@ -46,6 +48,10 @@ export function AdminProductEditor() {
   const [values, setValues] = useState<ProductFormValues>(EMPTY_VALUES)
   const [images, setImages] = useState<ImageDraft[]>([])
   const [attributes, setAttributes] = useState<AttributeDraft[]>([])
+  const [aiSummary, setAiSummary] = useState<{ text: string | null; generatedAt: string | null }>({
+    text: null,
+    generatedAt: null,
+  })
   const [isLoadingProduct, setIsLoadingProduct] = useState(!!id)
   const isLoading = isLoadingProduct || categoriesLoading
   const [isSaving, setIsSaving] = useState(false)
@@ -62,6 +68,7 @@ export function AdminProductEditor() {
         `name, slug, category_id, description, size, thickness, finish,
          country_of_origin, cover_image_url, is_featured, is_new,
          brand, merchant, sku, availability, manufacturer, price,
+         ai_summary, ai_summary_generated_at,
          product_images ( image_url ),
          product_attributes ( attribute_type, value )`
       )
@@ -70,10 +77,11 @@ export function AdminProductEditor() {
       .then(({ data }) => {
         if (data) {
           const fetched = data as unknown as FetchedProduct
-          const { product_images, product_attributes, ...formValues } = fetched
+          const { product_images, product_attributes, ai_summary, ai_summary_generated_at, ...formValues } = fetched
           setValues({ ...formValues, is_new: formValues.is_new ?? false })
           setImages(product_images.map((img) => ({ image_url: img.image_url })))
           setAttributes(product_attributes)
+          setAiSummary({ text: ai_summary, generatedAt: ai_summary_generated_at })
         }
         setIsLoadingProduct(false)
       })
@@ -114,7 +122,11 @@ export function AdminProductEditor() {
       onSubmit={handleSubmit}
       onSlugChange={(slug) => updateField("slug", slug)}
       accessToken={session?.access_token ?? null}
-      onApplySummary={(summary) => updateField("description", summary)}
+      productId={id ?? null}
+      savedAiSummary={aiSummary.text}
+      savedAiSummaryGeneratedAt={aiSummary.generatedAt}
+      onAiSummarySaved={(text, generatedAt) => setAiSummary({ text, generatedAt })}
+      onCopySummaryToDescription={(summary) => updateField("description", summary)}
     />
   )
 }

@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useState } from "react"
-import { SparklesIcon, RefreshCwIcon, CheckIcon } from "lucide-react"
+import { Link2Icon, RefreshCwIcon, CheckIcon } from "lucide-react"
 import { cn, slugify } from "@/lib/utils"
 
 // ---------------------------------------------------------------------------
-// useAiSuggestions — simulated/connectable hook
+// useSlugSuggestions — a deterministic, rule-based local generator.
+//
+// Deliberately NOT AI-generated (no model call, no API cost) — this is a
+// plain string-manipulation helper. Styled distinctly from the real,
+// Anthropic-backed AiSummaryInspector panel next to it (different icon/accent,
+// no "AI" wording) so an admin can never mistake this for model output.
 // ---------------------------------------------------------------------------
 
 interface Suggestion {
@@ -12,13 +17,8 @@ interface Suggestion {
   reason: string
 }
 
-/**
- * Generates 3-4 SEO-optimised slug alternatives from the product title and
- * category. Currently a deterministic local generator wrapped in a small
- * artificial delay so the UI shows its loading skeleton — swap the body for
- * a `fetch("/api/ai-slug", ...)` call when wiring to a real model.
- */
-function useAiSuggestions(title: string, category: string | undefined) {
+/** Generates 3-4 SEO-oriented slug alternatives from the product title and category. */
+function useSlugSuggestions(title: string, category: string | undefined) {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [isGenerating, setIsGenerating] = useState(false)
   const [seed, setSeed] = useState(0)
@@ -78,31 +78,34 @@ function useAiSuggestions(title: string, category: string | undefined) {
 }
 
 // ---------------------------------------------------------------------------
-// AiSlugRecommendations panel
+// SuggestedSlugPanel — rule-based, not AI-generated
 // ---------------------------------------------------------------------------
 
-interface AiSlugRecommendationsProps {
+interface SuggestedSlugPanelProps {
   title: string
   category: string | undefined
   onApply: (slug: string) => void
   activeSlug: string
 }
 
-export function AiSlugRecommendations({
+export function SuggestedSlugPanel({
   title,
   category,
   onApply,
   activeSlug,
-}: AiSlugRecommendationsProps) {
-  const { suggestions, isGenerating, regenerate } = useAiSuggestions(title, category)
+}: SuggestedSlugPanelProps) {
+  const { suggestions, isGenerating, regenerate } = useSlugSuggestions(title, category)
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-[#EBE3D8] bg-white p-4 shadow-sm">
+    <div className="flex flex-col gap-3 rounded-lg border border-dashed border-[#DDD4C7] bg-[#FDFBF7] p-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <SparklesIcon className="size-4 text-[#C25A2B]" />
-          <h3 className="text-sm font-semibold text-foreground">AI Slug Suggestions</h3>
+          <Link2Icon className="size-4 text-slate-500" />
+          <h3 className="text-sm font-semibold text-foreground">Suggested Slug &amp; SEO</h3>
+          <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
+            rule-based, not AI
+          </span>
         </div>
         <button
           type="button"
@@ -110,20 +113,20 @@ export function AiSlugRecommendations({
           disabled={isGenerating || !title.trim()}
           className={cn(
             "flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium transition-colors",
-            "text-muted-foreground hover:bg-[#FDFBF7] hover:text-foreground",
+            "text-muted-foreground hover:bg-white hover:text-foreground",
             "disabled:opacity-40",
           )}
         >
           <RefreshCwIcon
             className={cn("size-3.5", isGenerating && "animate-spin")}
           />
-          Regenerate
+          Refresh
         </button>
       </div>
 
       <p className="text-xs text-muted-foreground">
-        SEO-optimised slug alternatives derived from the title and category.
-        Click to apply instantly.
+        Slug alternatives built from the title and category using simple text rules
+        — not model-generated. Click to apply instantly.
       </p>
 
       {/* Suggestion cards */}
@@ -138,7 +141,7 @@ export function AiSlugRecommendations({
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="h-10 animate-pulse rounded-lg border border-[#EBE3D8] bg-[#FDFBF7]"
+              className="h-10 animate-pulse rounded-lg border border-[#DDD4C7] bg-white"
             />
           ))}
         </div>
@@ -156,15 +159,15 @@ export function AiSlugRecommendations({
                 className={cn(
                   "group flex items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left transition-all",
                   isActive
-                    ? "border-[#C25A2B] bg-[#C25A2B]/5"
-                    : "border-[#EBE3D8] bg-[#FDFBF7] hover:border-[#C25A2B]/40 hover:bg-white",
+                    ? "border-slate-400 bg-slate-100"
+                    : "border-[#DDD4C7] bg-white hover:border-slate-400/60 hover:bg-slate-50",
                 )}
               >
                 <div className="min-w-0 flex-1">
                   <p
                     className={cn(
                       "truncate font-mono text-sm",
-                      isActive ? "font-semibold text-[#C25A2B]" : "text-foreground",
+                      isActive ? "font-semibold text-slate-700" : "text-foreground",
                     )}
                   >
                     {s.label}
@@ -172,7 +175,7 @@ export function AiSlugRecommendations({
                   <p className="text-[11px] text-muted-foreground">{s.reason}</p>
                 </div>
                 {isActive ? (
-                  <CheckIcon className="size-4 shrink-0 text-[#C25A2B]" />
+                  <CheckIcon className="size-4 shrink-0 text-slate-600" />
                 ) : (
                   <span className="shrink-0 rounded-md border border-[#DDD4C7] bg-white px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
                     Apply

@@ -15,7 +15,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { SlugInputWithLock } from "./SlugInputWithLock"
 import { CoverImageDropzone, ImageGallery, type GalleryImage } from "./ImageDropzone"
-import { AiSlugRecommendations } from "./AiSlugRecommendations"
+import { SuggestedSlugPanel } from "./AiSlugRecommendations"
 import { AiSummaryInspector } from "./AiSummaryInspector"
 import { cn } from "@/lib/utils"
 import type { ProductFormValues, ImageDraft, AttributeDraft } from "@/lib/products-admin"
@@ -41,12 +41,22 @@ export interface ProductFormStudioProps {
   onImagesChange: (images: ImageDraft[]) => void
   onAttributesChange: (attrs: AttributeDraft[]) => void
   onSubmit: (e: FormEvent) => void
-  /** Called when an AI slug suggestion is clicked — sets slug + marks as locked. */
+  /** Called when a suggested slug is clicked — sets slug + marks as locked. */
   onSlugChange: (slug: string) => void
   /** Supabase access token for the AI summary generator. */
   accessToken: string | null
-  /** Fired when the user clicks "Apply to Description" in the AI summary panel. */
-  onApplySummary: (summary: string) => void
+  /** Existing product id, or null for a not-yet-saved new product — the AI
+   *  summary can only be saved once the product itself has an id. */
+  productId: string | null
+  /** The AI summary currently stored on `products.ai_summary`, if any. */
+  savedAiSummary: string | null
+  savedAiSummaryGeneratedAt: string | null
+  /** Fired after the AI summary panel writes `ai_summary` directly to the row. */
+  onAiSummarySaved: (summary: string, generatedAtIso: string) => void
+  /** Fired when the user explicitly copies the AI summary text into the
+   *  Product Story / Description field — a separate, deliberate action from
+   *  saving it as the cached AI summary. */
+  onCopySummaryToDescription: (summary: string) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -98,7 +108,11 @@ export function ProductFormStudio({
   onSubmit,
   onSlugChange,
   accessToken,
-  onApplySummary,
+  productId,
+  savedAiSummary,
+  savedAiSummaryGeneratedAt,
+  onAiSummarySaved,
+  onCopySummaryToDescription,
 }: ProductFormStudioProps) {
   if (isLoading) {
     return (
@@ -446,12 +460,15 @@ export function ProductFormStudio({
               productContext={aiContext}
               accessToken={accessToken}
               categoryName={categoryName}
-              currentDescription={values.description}
-              onApply={onApplySummary}
+              productId={productId}
+              savedSummary={savedAiSummary}
+              savedGeneratedAt={savedAiSummaryGeneratedAt}
+              onSaved={onAiSummarySaved}
+              onCopyToDescription={onCopySummaryToDescription}
             />
 
-            {/* AI Slug & SEO */}
-            <AiSlugRecommendations
+            {/* Suggested Slug & SEO (rule-based, not AI) */}
+            <SuggestedSlugPanel
               title={values.name}
               category={categoryName}
               activeSlug={values.slug}

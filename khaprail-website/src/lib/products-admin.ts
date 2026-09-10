@@ -94,3 +94,22 @@ export async function deleteProduct(id: string): Promise<void> {
   const { error } = await supabase.from("products").delete().eq("id", id)
   if (error) throw error
 }
+
+/**
+ * Writes the cached PDP AI summary (`products.ai_summary` /
+ * `ai_summary_generated_at`) directly, independent of `saveProduct` — per
+ * the original design, generating a summary is its own explicit write, not
+ * something bundled into (or lost without) the main "Publish Tile" submit.
+ * Requires an existing product id, since there's nothing to attach the
+ * summary to before the product itself has been saved once.
+ */
+export async function saveAiSummary(productId: string, summary: string): Promise<string> {
+  if (!supabase) throw new Error("Supabase project not configured yet")
+  const generatedAt = new Date().toISOString()
+  const { error } = await supabase
+    .from("products")
+    .update({ ai_summary: summary, ai_summary_generated_at: generatedAt })
+    .eq("id", productId)
+  if (error) throw error
+  return generatedAt
+}
