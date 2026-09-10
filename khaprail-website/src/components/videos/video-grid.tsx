@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { PlayIcon } from "lucide-react"
 import { VideoLightbox } from "@/components/videos/video-lightbox"
+import { StorageImage } from "@/components/shared/storage-image"
 import type { Video } from "@/types/video"
 
 interface VideoGridProps {
@@ -21,7 +22,13 @@ export function VideoGrid({ videos }: VideoGridProps) {
             className="group/video relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg bg-muted outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             {video.thumbnail_url && (
-              <img src={video.thumbnail_url} alt="" className="h-full w-full object-cover" />
+              <StorageImage
+                src={video.thumbnail_url}
+                alt=""
+                width={280}
+                height={158}
+                className="h-full w-full object-cover"
+              />
             )}
             <span className="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors group-hover/video:bg-black/35">
               <span className="flex size-12 items-center justify-center rounded-full bg-white/90 text-primary shadow transition-transform group-hover/video:scale-110">

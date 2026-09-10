@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import { StorageImage } from "@/components/shared/storage-image"
 import { useBlogPosts } from "@/hooks/use-blog-posts"
 
 // /blog — published posts only (06-BLOG-CMS-SPEC.md).
@@ -34,7 +35,13 @@ export function BlogIndex() {
                 <Card className="h-full p-0">
                   <div className="flex aspect-[16/10] w-full items-center justify-center overflow-hidden bg-muted">
                     {post.cover_image_url && (
-                      <img src={post.cover_image_url} alt="" className="h-full w-full object-cover" />
+                      <StorageImage
+                        src={post.cover_image_url}
+                        alt=""
+                        width={380}
+                        height={240}
+                        className="h-full w-full object-cover"
+                      />
                     )}
                   </div>
                   <CardContent className="flex flex-col gap-2 py-4">

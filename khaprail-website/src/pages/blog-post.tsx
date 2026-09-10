@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { StorageImage } from "@/components/shared/storage-image"
 import { FaqAccordion } from "@/components/blog/faq-accordion"
 import { useBlogPost } from "@/hooks/use-blog-post"
 import { buildArticleJsonLd, buildFaqJsonLd } from "@/lib/seo/json-ld"
@@ -48,7 +49,14 @@ export function BlogPost() {
       <div className="mx-auto w-full max-w-2xl px-4 py-16 sm:px-6">
         {post.cover_image_url && (
           <div className="mb-8 flex aspect-[16/9] w-full items-center justify-center overflow-hidden rounded-xl bg-muted">
-            <img src={post.cover_image_url} alt="" className="h-full w-full object-cover" />
+            <StorageImage
+              src={post.cover_image_url}
+              alt=""
+              width={672}
+              height={378}
+              priority
+              className="h-full w-full object-cover"
+            />
           </div>
         )}
 

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { Skeleton } from "@/components/ui/skeleton"
+import { StorageImage } from "@/components/shared/storage-image"
 import { useCategories } from "@/hooks/use-categories"
 import { useCategoryProductCounts } from "@/hooks/use-category-product-counts"
 import { getRootCategories, getRootCategoryId } from "@/lib/category-tree"
@@ -56,10 +57,12 @@ export function CategoryShowcase() {
                 >
                   <div className="relative flex aspect-[3/4] w-full items-center justify-center overflow-hidden rounded-2xl bg-foreground/10 shadow-sm">
                     {category.cover_image_url && (
-                      // Explicit width/height matching the container's own
-                      // 3:4 ratio reserves layout space before load
+                      // Real WebP/quality/size optimization via Supabase's
+                      // transform endpoint (SEO/perf batch A, 2026-09-10).
+                      // Width/height match the container's own 3:4 ratio,
+                      // reserving layout space before load
                       // (UX_AUDIT_REPORT.md finding 11).
-                      <img
+                      <StorageImage
                         src={category.cover_image_url}
                         alt=""
                         width={300}

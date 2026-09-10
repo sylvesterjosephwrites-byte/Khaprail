@@ -1,5 +1,7 @@
+import { Suspense } from "react"
 import { NavLink, Outlet } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { RouteLoadingFallback } from "@/components/shared/route-loading-fallback"
 import { useAuth } from "@/lib/auth-context"
 import { cn } from "@/lib/utils"
 
@@ -63,7 +65,9 @@ export function AdminLayout() {
         </div>
       </aside>
       <div className="flex-1 overflow-x-hidden">
-        <Outlet />
+        <Suspense fallback={<RouteLoadingFallback />}>
+          <Outlet />
+        </Suspense>
       </div>
     </div>
   )

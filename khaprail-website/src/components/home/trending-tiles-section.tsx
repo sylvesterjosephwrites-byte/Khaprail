@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { Skeleton } from "@/components/ui/skeleton"
+import { StorageImage } from "@/components/shared/storage-image"
 import { useTrendingTiles } from "@/hooks/use-trending-tiles"
 import { cn } from "@/lib/utils"
 import type { TrendingTile } from "@/types/trending-tile"
@@ -72,10 +73,16 @@ function TrendingTileCard({ tile, className }: { tile: TrendingTile; className?:
         className
       )}
     >
-      <img
+      {/* Real WebP/quality/size optimization via Supabase's transform
+          endpoint (SEO/perf batch A, 2026-09-10). Position-absolute fill, so
+          width/height only inform the transform request size — the visible
+          box is entirely CSS-driven (h-full w-full) and already sized by
+          the parent's aspect-ratio className, no CLS risk either way. */}
+      <StorageImage
         src={tile.image_url}
         alt={tile.image_alt_text}
-        loading="lazy"
+        width={600}
+        height={450}
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
       {tile.show_new_badge && (

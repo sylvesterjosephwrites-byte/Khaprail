@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { Skeleton } from "@/components/ui/skeleton"
+import { StorageImage } from "@/components/shared/storage-image"
 import { useCategories } from "@/hooks/use-categories"
 import { getRootCategories } from "@/lib/category-tree"
 
@@ -41,11 +42,13 @@ export function FeatureRow() {
               >
                 <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl bg-panel-navy shadow-sm">
                   {category.cover_image_url && (
-                    // Explicit width/height matching the container's own
-                    // 4:3 ratio reserves layout space before load — several
-                    // live category photos are 2MB+ unoptimized PNGs
-                    // (UX_AUDIT_REPORT.md finding 11).
-                    <img
+                    // Real WebP/quality/size optimization via Supabase's
+                    // transform endpoint (SEO/perf batch A, 2026-09-10) — this
+                    // is where the UX audit's flagged `wall-tiles.png.png`
+                    // (2061KB)/`roof-tiles.png.png` (2246KB) actually render,
+                    // confirmed live via Lighthouse as ~2.2MB wasted bytes
+                    // each. Width/height match the container's own 4:3 ratio.
+                    <StorageImage
                       src={category.cover_image_url}
                       alt=""
                       width={400}

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { StorageImage } from "@/components/shared/storage-image"
 import { buildSampleRequestMessage, buildWhatsAppUrl } from "@/lib/whatsapp"
 import type { Product } from "@/types/product"
 
@@ -37,7 +38,18 @@ export function ProductCard({ product }: ProductCardProps) {
       <Link to={`/products/${product.slug}`} className="group/link outline-none">
         <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden bg-white">
           {product.cover_image_url && (
-            <img src={product.cover_image_url} alt="" className="h-full w-full object-cover" />
+            // Real WebP/quality/size optimization via Supabase's transform
+            // endpoint (SEO/perf batch A, 2026-09-10) — plus explicit
+            // width/height this card never had, reserving layout space
+            // before load (the `aspect-square` container already prevents
+            // shift, but every other image on the site now sets these too).
+            <StorageImage
+              src={product.cover_image_url}
+              alt=""
+              width={320}
+              height={320}
+              className="h-full w-full object-cover"
+            />
           )}
           {isNewArrival(product) && (
             <Badge className="absolute top-2 left-2 bg-navy text-navy-foreground">New Arrival</Badge>

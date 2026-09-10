@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import { StorageImage } from "@/components/shared/storage-image"
 import type { ChatProductCard } from "@/lib/ai-chat-client"
 
 interface AiChatProductCardProps {
@@ -18,7 +19,13 @@ export function AiChatProductCard({ product }: AiChatProductCardProps) {
     >
       <div className="flex aspect-square w-full items-center justify-center overflow-hidden bg-white">
         {product.cover_image_url ? (
-          <img src={product.cover_image_url} alt="" className="h-full w-full object-cover" />
+          <StorageImage
+            src={product.cover_image_url}
+            alt=""
+            width={128}
+            height={128}
+            className="h-full w-full object-cover"
+          />
         ) : (
           <span className="text-xs text-muted-foreground">No photo</span>
         )}

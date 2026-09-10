@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { Skeleton } from "@/components/ui/skeleton"
+import { StorageImage } from "@/components/shared/storage-image"
 import { useLifestyleTiles } from "@/hooks/use-lifestyle-tiles"
 import { cn } from "@/lib/utils"
 
@@ -55,10 +56,11 @@ export function LifestyleTilesSection() {
                 className="group flex flex-col items-center gap-3 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
               >
                 <div className="aspect-[4/5] w-full overflow-hidden rounded-2xl">
-                  <img
+                  <StorageImage
                     src={tile.image_url}
                     alt={tile.image_alt_text}
-                    loading="lazy"
+                    width={380}
+                    height={475}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>

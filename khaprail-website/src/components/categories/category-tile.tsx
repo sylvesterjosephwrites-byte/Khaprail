@@ -1,6 +1,7 @@
 import { createElement } from "react"
 import { motion } from "framer-motion"
 import { getCategoryIcon } from "@/lib/category-icons"
+import { StorageImage } from "@/components/shared/storage-image"
 import { cn } from "@/lib/utils"
 import type { Category } from "@/types/category"
 
@@ -27,12 +28,12 @@ export function CategoryTile({ category, compact }: CategoryTileProps) {
         )}
       >
         {category.cover_image_url ? (
-          // Explicit width/height (matching the container's own aspect
-          // ratio, not the source file's real dimensions) so the browser
-          // can reserve layout space before the image loads, regardless of
-          // how large/slow the real uploaded file is — several live category
-          // photos are 2MB+ unoptimized PNGs (UX_AUDIT_REPORT.md finding 11).
-          <img
+          // Real WebP/quality/size optimization via Supabase's image
+          // transform endpoint (SEO/perf batch A, 2026-09-10) — several live
+          // category photos are 2MB+ unoptimized PNGs (UX_AUDIT_REPORT.md
+          // finding 11); `StorageImage` requests an already-small version
+          // instead of shipping the full source file into a ~200-320px slot.
+          <StorageImage
             src={category.cover_image_url}
             alt=""
             width={compact ? 200 : 320}

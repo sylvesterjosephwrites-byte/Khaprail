@@ -12,10 +12,16 @@ export function Hero() {
     <section className="relative overflow-hidden">
       <picture>
         <source srcSet={HERO_IMAGE_WEBP} type="image/webp" />
+        {/* Confirmed via Lighthouse (SEO/perf batch A, 2026-09-10) as this
+            page's LCP element — `fetchPriority="high"` tells the browser to
+            prioritize this download the moment it's discovered, instead of
+            competing with other requests at default priority. Already
+            eager/not lazy-loaded (correct, it's above the fold). */}
         <img
           src={HERO_IMAGE_JPG}
           alt=""
           aria-hidden="true"
+          fetchPriority="high"
           className="absolute inset-0 -z-20 h-full w-full object-cover object-[center_25%]"
         />
       </picture>

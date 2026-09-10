@@ -1,5 +1,6 @@
 import { createElement } from "react"
 import { getCategoryIcon } from "@/lib/category-icons"
+import { StorageImage } from "@/components/shared/storage-image"
 import { cn } from "@/lib/utils"
 import type { Category } from "@/types/category"
 
@@ -35,13 +36,17 @@ export function CategoryBadgeCircle({ category, index = 0, size = "default" }: C
       )}
     >
       {category.cover_image_url ? (
-        // Explicit width/height (1:1, matching this circle) reserves layout
-        // space before load (UX_AUDIT_REPORT.md finding 11).
-        <img
+        // Real WebP/quality/size optimization via Supabase's transform
+        // endpoint (SEO/perf batch A, 2026-09-10 — StorageImage already
+        // requests a 2x-retina size internally, so pass the true CSS
+        // display size here, not a pre-doubled one). 1:1 width/height
+        // matching this circle reserves layout space before load
+        // (UX_AUDIT_REPORT.md finding 11).
+        <StorageImage
           src={category.cover_image_url}
           alt=""
-          width={size === "lg" ? 224 : 160}
-          height={size === "lg" ? 224 : 160}
+          width={size === "lg" ? 112 : 80}
+          height={size === "lg" ? 112 : 80}
           className="h-full w-full object-cover"
         />
       ) : (

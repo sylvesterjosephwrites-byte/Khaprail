@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 import { Skeleton } from "@/components/ui/skeleton"
+import { StorageImage } from "@/components/shared/storage-image"
 import { buildWhatsAppUrl, DEFAULT_WHATSAPP_MESSAGE } from "@/lib/whatsapp"
 import { getRootCategories, getCategoryChildren } from "@/lib/category-tree"
 import { useMobileDrawer } from "@/lib/mobile-drawer-context"
@@ -124,7 +125,13 @@ export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
                       >
                         <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-white">
                           {product.cover_image_url && (
-                            <img src={product.cover_image_url} alt="" className="h-full w-full object-cover" />
+                            <StorageImage
+                              src={product.cover_image_url}
+                              alt=""
+                              width={48}
+                              height={48}
+                              className="h-full w-full object-cover"
+                            />
                           )}
                         </div>
                         <div className="flex min-w-0 flex-1 flex-col">

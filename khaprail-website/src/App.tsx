@@ -1,39 +1,85 @@
+import { lazy, Suspense } from "react"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { ScrollToTop } from "@/components/layout/scroll-to-top"
 import { SiteLayout } from "@/components/layout/site-layout"
+import { RouteLoadingFallback } from "@/components/shared/route-loading-fallback"
 import { Home } from "@/pages/home"
-import { CategoriesIndex } from "@/pages/categories-index"
-import { CategoryDetail } from "@/pages/category-detail"
-import { ProductsListing } from "@/pages/products-listing"
-import { SearchResults } from "@/pages/search-results"
-import { ProductDetail } from "@/pages/product-detail"
-import { NewArrivals } from "@/pages/new-arrivals"
-import { BestSellers } from "@/pages/best-sellers"
-import { About } from "@/pages/about"
-import { Contact } from "@/pages/contact"
-import { Videos } from "@/pages/videos"
-import { Downloads } from "@/pages/downloads"
-import { BlogIndex } from "@/pages/blog-index"
-import { BlogPost } from "@/pages/blog-post"
-import { AdminLogin } from "@/pages/admin/login"
-import { DashboardHome } from "@/pages/admin/dashboard-home"
-import { AdminProductsList } from "@/pages/admin/products-list"
-import { AdminProductEditor } from "@/pages/admin/product-editor"
-import { AdminCategoriesList } from "@/pages/admin/categories-list"
-import { AdminCategoryEditor } from "@/pages/admin/category-editor"
-import { AdminFilterTypesList } from "@/pages/admin/filter-types-list"
-import { AdminBlogList } from "@/pages/admin/blog-list"
-import { AdminBlogEditor } from "@/pages/admin/blog-editor"
-import { AdminSampleInquiriesList } from "@/pages/admin/sample-inquiries-list"
-import { AdminLifestyleTilesList } from "@/pages/admin/lifestyle-tiles-list"
-import { AdminLifestyleTileEditor } from "@/pages/admin/lifestyle-tile-editor"
-import { AdminOfferCardsList } from "@/pages/admin/offer-cards-list"
-import { AdminOfferCardEditor } from "@/pages/admin/offer-card-editor"
-import { AdminTrendingTilesList } from "@/pages/admin/trending-tiles-list"
-import { AdminTrendingTileEditor } from "@/pages/admin/trending-tile-editor"
 import { AuthProvider } from "@/lib/auth-context"
 import { ProtectedRoute } from "@/components/admin/protected-route"
 import { AdminLayout } from "@/components/admin/admin-layout"
+
+// SEO/perf batch A (2026-09-10, see 00-PROGRESS.md): every route was
+// previously a static import, so a first-time visitor to the homepage
+// downloaded the entire app in one bundle — every admin CRUD editor, the
+// blog editor, every storefront page — before React could render anything.
+// `lazy()` splits each route into its own chunk, fetched only when that
+// route is actually visited; Vite/Rollup handles the chunking automatically
+// from these dynamic `import()` calls, no manual `manualChunks` config
+// needed. The admin section in particular (16 routes, never visited by a
+// public/crawler request) no longer ships to storefront visitors at all.
+//
+// `Home` is the one exception, kept as a normal static import: measured
+// live (re-ran Lighthouse after lazy-loading it too) and lazy-loading the
+// single overwhelmingly-most-common landing page actually made LCP/FCP/TBT
+// *worse* — it adds one extra network round-trip (fetch the "home" chunk)
+// before the hero/LCP image can even start rendering, which costs more than
+// the ~24KB it would have saved. Every other route keeps the real byte
+// savings from splitting with none of that downside, since they aren't the
+// default landing page.
+const CategoriesIndex = lazy(() => import("@/pages/categories-index").then((m) => ({ default: m.CategoriesIndex })))
+const CategoryDetail = lazy(() => import("@/pages/category-detail").then((m) => ({ default: m.CategoryDetail })))
+const ProductsListing = lazy(() => import("@/pages/products-listing").then((m) => ({ default: m.ProductsListing })))
+const SearchResults = lazy(() => import("@/pages/search-results").then((m) => ({ default: m.SearchResults })))
+const ProductDetail = lazy(() => import("@/pages/product-detail").then((m) => ({ default: m.ProductDetail })))
+const NewArrivals = lazy(() => import("@/pages/new-arrivals").then((m) => ({ default: m.NewArrivals })))
+const BestSellers = lazy(() => import("@/pages/best-sellers").then((m) => ({ default: m.BestSellers })))
+const About = lazy(() => import("@/pages/about").then((m) => ({ default: m.About })))
+const Contact = lazy(() => import("@/pages/contact").then((m) => ({ default: m.Contact })))
+const Videos = lazy(() => import("@/pages/videos").then((m) => ({ default: m.Videos })))
+const Downloads = lazy(() => import("@/pages/downloads").then((m) => ({ default: m.Downloads })))
+const BlogIndex = lazy(() => import("@/pages/blog-index").then((m) => ({ default: m.BlogIndex })))
+const BlogPost = lazy(() => import("@/pages/blog-post").then((m) => ({ default: m.BlogPost })))
+
+const AdminLogin = lazy(() => import("@/pages/admin/login").then((m) => ({ default: m.AdminLogin })))
+const DashboardHome = lazy(() => import("@/pages/admin/dashboard-home").then((m) => ({ default: m.DashboardHome })))
+const AdminProductsList = lazy(() =>
+  import("@/pages/admin/products-list").then((m) => ({ default: m.AdminProductsList }))
+)
+const AdminProductEditor = lazy(() =>
+  import("@/pages/admin/product-editor").then((m) => ({ default: m.AdminProductEditor }))
+)
+const AdminCategoriesList = lazy(() =>
+  import("@/pages/admin/categories-list").then((m) => ({ default: m.AdminCategoriesList }))
+)
+const AdminCategoryEditor = lazy(() =>
+  import("@/pages/admin/category-editor").then((m) => ({ default: m.AdminCategoryEditor }))
+)
+const AdminFilterTypesList = lazy(() =>
+  import("@/pages/admin/filter-types-list").then((m) => ({ default: m.AdminFilterTypesList }))
+)
+const AdminBlogList = lazy(() => import("@/pages/admin/blog-list").then((m) => ({ default: m.AdminBlogList })))
+const AdminBlogEditor = lazy(() => import("@/pages/admin/blog-editor").then((m) => ({ default: m.AdminBlogEditor })))
+const AdminSampleInquiriesList = lazy(() =>
+  import("@/pages/admin/sample-inquiries-list").then((m) => ({ default: m.AdminSampleInquiriesList }))
+)
+const AdminLifestyleTilesList = lazy(() =>
+  import("@/pages/admin/lifestyle-tiles-list").then((m) => ({ default: m.AdminLifestyleTilesList }))
+)
+const AdminLifestyleTileEditor = lazy(() =>
+  import("@/pages/admin/lifestyle-tile-editor").then((m) => ({ default: m.AdminLifestyleTileEditor }))
+)
+const AdminOfferCardsList = lazy(() =>
+  import("@/pages/admin/offer-cards-list").then((m) => ({ default: m.AdminOfferCardsList }))
+)
+const AdminOfferCardEditor = lazy(() =>
+  import("@/pages/admin/offer-card-editor").then((m) => ({ default: m.AdminOfferCardEditor }))
+)
+const AdminTrendingTilesList = lazy(() =>
+  import("@/pages/admin/trending-tiles-list").then((m) => ({ default: m.AdminTrendingTilesList }))
+)
+const AdminTrendingTileEditor = lazy(() =>
+  import("@/pages/admin/trending-tile-editor").then((m) => ({ default: m.AdminTrendingTileEditor }))
+)
 
 function App() {
   return (
@@ -60,8 +106,17 @@ function App() {
 
           {/* Admin gets its own chrome, not the storefront's SiteLayout
               (07-ADMIN-DASHBOARD-SPEC.md). /admin/login is the only public
-              admin route; everything else requires a session. */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+              admin route, and isn't nested in a layout with its own
+              Suspense boundary (see admin-layout.tsx), so it gets one of
+              its own; everything else requires a session. */}
+          <Route
+            path="/admin/login"
+            element={
+              <Suspense fallback={<RouteLoadingFallback />}>
+                <AdminLogin />
+              </Suspense>
+            }
+          />
           <Route element={<ProtectedRoute />}>
             <Route element={<AdminLayout />}>
               <Route path="/admin" element={<DashboardHome />} />

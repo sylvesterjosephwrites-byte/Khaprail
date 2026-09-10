@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { SearchIcon } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
+import { StorageImage } from "@/components/shared/storage-image"
 import { useProductSearch } from "@/hooks/use-product-search"
 import { cn } from "@/lib/utils"
 
@@ -136,7 +137,13 @@ export function SiteSearch() {
                   >
                     <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-md border border-border bg-white">
                       {product.cover_image_url && (
-                        <img src={product.cover_image_url} alt="" className="h-full w-full object-cover" />
+                        <StorageImage
+                          src={product.cover_image_url}
+                          alt=""
+                          width={40}
+                          height={40}
+                          className="h-full w-full object-cover"
+                        />
                       )}
                     </div>
                     <div className="flex min-w-0 flex-1 flex-col">

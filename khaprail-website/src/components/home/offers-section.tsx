@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import { Skeleton } from "@/components/ui/skeleton"
+import { StorageImage } from "@/components/shared/storage-image"
 import { useOfferCards } from "@/hooks/use-offer-cards"
 import { cn } from "@/lib/utils"
 import type { OfferCard } from "@/types/offer-card"
@@ -62,10 +63,15 @@ function OfferCardTile({ card }: { card: OfferCard }) {
 
   return (
     <div className="relative flex aspect-[3/4] flex-col justify-between overflow-hidden rounded-2xl bg-navy p-5">
-      <img
+      {/* Real WebP/quality/size optimization via Supabase's transform
+          endpoint (SEO/perf batch A, 2026-09-10) — this exact image (one of
+          this batch's live-confirmed multi-MB offenders) was previously
+          served at full source size into a ~380x250px slot. */}
+      <StorageImage
         src={card.image_url}
         alt={card.image_alt_text}
-        loading="lazy"
+        width={500}
+        height={330}
         className="absolute inset-x-0 bottom-0 h-2/3 w-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/85 to-navy/20" />
