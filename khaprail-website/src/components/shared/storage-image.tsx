@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react"
 import { isSupabaseStorageUrl, transformStorageImage } from "@/lib/image-transform"
 
 interface StorageImageProps {
@@ -7,6 +8,7 @@ interface StorageImageProps {
   width: number
   height: number
   className?: string
+  style?: CSSProperties
   quality?: number
   resize?: "cover" | "contain" | "fill"
   /** Above-the-fold / LCP-candidate image — loads eagerly with a high fetch priority instead of the lazy-loaded default. */
@@ -27,6 +29,7 @@ export function StorageImage({
   width,
   height,
   className,
+  style,
   quality,
   resize = "cover",
   priority = false,
@@ -47,6 +50,7 @@ export function StorageImage({
         decoding={priority ? "sync" : "async"}
         fetchPriority={priority ? "high" : undefined}
         className={className}
+        style={style}
       />
     </picture>
   )

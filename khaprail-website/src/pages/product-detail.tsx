@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from "react"
+import { lazy, Suspense } from "react"
 import { Link, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -26,7 +26,6 @@ const DownloadSpecSheetButton = lazy(() =>
 export function ProductDetail() {
   const { slug } = useParams<{ slug: string }>()
   const { product, isLoading, error } = useProduct(slug)
-  const [thumbnailSwapped, setThumbnailSwapped] = useState(false)
 
   const relatedProducts = useRelatedProducts(product?.category_id ?? null, product?.id ?? "")
   const comparableProducts = useComparableProducts(product?.category_id ?? null, product?.id ?? "")
@@ -60,17 +59,13 @@ export function ProductDetail() {
     )
   }
 
-  const secondaryImageUrl = product.product_images[0]?.image_url ?? null
-  const heroImageUrl = thumbnailSwapped ? secondaryImageUrl : (product.cover_image_url ?? secondaryImageUrl)
-  const thumbnailImageUrl = thumbnailSwapped ? (product.cover_image_url ?? null) : secondaryImageUrl
-
   return (
     <main className="flex-1">
       <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2">
         <Gallery
-          heroImageUrl={heroImageUrl}
-          thumbnailImageUrl={product.cover_image_url && secondaryImageUrl ? thumbnailImageUrl : null}
-          onSwapThumbnail={() => setThumbnailSwapped((prev) => !prev)}
+          productName={product.name}
+          coverImageUrl={product.cover_image_url}
+          productImages={product.product_images}
         />
 
         <div className="flex flex-col gap-6">
