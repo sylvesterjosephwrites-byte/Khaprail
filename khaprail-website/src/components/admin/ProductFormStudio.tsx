@@ -445,6 +445,7 @@ export function ProductFormStudio({
             <AiSummaryInspector
               productContext={aiContext}
               accessToken={accessToken}
+              categoryName={categoryName}
               currentDescription={values.description}
               onApply={onApplySummary}
             />

@@ -76,6 +76,53 @@ export async function generateProductSummary(
   return data.summary as string
 }
 
+export type SummaryTone = "architectural" | "commercial" | "minimal"
+
+/**
+ * Admin-only — generates a static product summary via the dedicated
+ * `/api/ai/generate-summary` endpoint. Tone-aware: the selected tone
+ * (architectural / commercial / minimal) shapes the Claude Haiku prompt.
+ * The result is meant to be saved to the DB by the admin form — customer
+ * page views never trigger any AI API calls.
+ */
+export async function generateStaticSummary(
+  product: ProductAiContext,
+  tone: SummaryTone,
+  accessToken: string,
+  categoryName?: string,
+): Promise<string> {
+  const res = await fetch("/api/ai/generate-summary", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      name: product.name,
+      category: categoryName ?? null,
+      finish: product.finish ?? null,
+      size: product.size ?? null,
+      thickness: product.thickness ?? null,
+      country_of_origin: product.country_of_origin ?? null,
+      price: product.price ?? null,
+      material: product.material ?? null,
+      applications: product.applications ?? [],
+      tone,
+    }),
+  })
+  const data = await res.json()
+  if (!res.ok) {
+    throw new Error(
+      data.error === "unauthorized"
+        ? "You must be signed in to generate a summary."
+        : data.error === "server_config"
+          ? "AI service is not configured on the server yet."
+          : (data.detail ?? data.message ?? "Failed to generate summary.")
+    )
+  }
+  return data.summary as string
+}
+
 export class ChatRateLimitError extends Error {}
 
 // NUL never appears in real assistant text — the backend appends it once
