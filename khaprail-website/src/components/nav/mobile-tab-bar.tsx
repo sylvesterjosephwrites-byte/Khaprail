@@ -4,15 +4,20 @@ import { HomeIcon, SlidersHorizontalIcon, DownloadIcon, PhoneIcon } from "lucide
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon"
 import { buildWhatsAppUrl, DEFAULT_WHATSAPP_MESSAGE } from "@/lib/whatsapp"
 import { useMobileDrawer } from "@/lib/mobile-drawer-context"
+import { useChatPanel } from "@/lib/chat-panel-context"
 import { cn } from "@/lib/utils"
 
 const MOBILE_FILTERS_HASH = "#mobile-filters"
 
 // Persistent bottom tab bar (mobile only, every page) — Home / Filters /
 // an elevated "Get a Sample" WhatsApp CTA / Catalog / Contact. Hidden
-// whenever the category drawer (hamburger) or the filters drawer is open,
-// so only one mobile nav surface is ever on screen at once. "Filters"
-// isn't a real page — it opens the two-pane filters drawer that lives on
+// whenever the category drawer (hamburger), the filters drawer, or the AI
+// chat panel is open, so only one mobile nav surface is ever on screen at
+// once — the chat panel now takes over the full mobile screen (see
+// ai-chat-widget.tsx), so without this the tab bar was visible
+// underneath/behind it, the exact double-UI-stacking case this rule
+// already existed to prevent for the other two drawers. "Filters" isn't a
+// real page — it opens the two-pane filters drawer that lives on
 // `/products` (see `mobile-filters-drawer.tsx`); the drawer's open/closed
 // state is the `#mobile-filters` URL hash rather than a query param,
 // specifically so it can't collide with `parseFiltersFromSearchParams`
@@ -23,9 +28,10 @@ export function MobileTabBar() {
   const location = useLocation()
   const navigate = useNavigate()
   const { categoryDrawerOpen } = useMobileDrawer()
+  const { isOpen: chatPanelOpen } = useChatPanel()
 
   const filtersDrawerOpen = location.hash === MOBILE_FILTERS_HASH
-  if (categoryDrawerOpen || filtersDrawerOpen) return null
+  if (categoryDrawerOpen || filtersDrawerOpen || chatPanelOpen) return null
 
   function handleFiltersTap() {
     if (location.pathname === "/products") {

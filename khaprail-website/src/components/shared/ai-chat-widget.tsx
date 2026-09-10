@@ -256,9 +256,23 @@ export function AiChatWidget() {
         <div
           role="dialog"
           aria-label="Khaprail Tiles AI assistant"
-          className="animate-in fade-in slide-in-from-bottom-4 fixed inset-x-0 bottom-0 z-40 flex h-[88vh] max-h-[720px] flex-col overflow-hidden rounded-t-2xl border-t border-border bg-popover shadow-2xl duration-200 lg:inset-x-auto lg:top-auto lg:bottom-[calc(max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))+4.25rem)] lg:right-5 lg:h-[min(70vh,640px)] lg:w-[420px] lg:rounded-2xl lg:border"
+          // Mobile: a true full-screen takeover (`inset-0` + `h-dvh`, not
+          // `bottom-0 h-[88vh]`) — `vh` units on mobile browsers are sized
+          // against the *largest* possible viewport (chrome collapsed), not
+          // the currently-visible one, so with the address bar shown the
+          // real visible height is shorter than `88vh` computes to; the
+          // panel's bottom (the input row) was rendering below the actual
+          // visible screen. `dvh` tracks the real visible viewport instead.
+          // Full-screen also means it fully covers the site header instead
+          // of a short floating card whose top edge landed inside it.
+          // Desktop (`lg:`) keeps the original floating-card behavior,
+          // anchored bottom-right above the WhatsApp button.
+          className="animate-in fade-in slide-in-from-bottom-4 fixed inset-0 z-40 flex h-dvh flex-col overflow-hidden bg-popover shadow-2xl duration-200 lg:inset-auto lg:bottom-[calc(max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))+4.25rem)] lg:right-5 lg:h-[min(70vh,640px)] lg:w-[420px] lg:rounded-2xl lg:border lg:border-border"
         >
-          <div className="flex items-center gap-2 border-b border-border p-3">
+          <div
+            className="flex shrink-0 items-center gap-2 border-b border-border p-3"
+            style={{ paddingTop: "env(safe-area-inset-top)" }}
+          >
             <AiBrandMark className="size-8" />
             <span className="font-heading text-sm font-semibold">Khaprail Assistant</span>
             <div className="ml-auto flex items-center gap-1">
@@ -281,13 +295,16 @@ export function AiChatWidget() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 px-3 pt-2">
+          <div className="flex shrink-0 items-center gap-2 px-3 pt-2">
             <div className="h-px flex-1 bg-border" />
             <span className="text-[0.65rem] font-medium tracking-wide text-muted-foreground uppercase">Today</span>
             <div className="h-px flex-1 bg-border" />
           </div>
 
-          <div ref={listRef} className="scrollbar-fade flex flex-1 flex-col gap-3 overflow-y-auto p-3">
+          {/* The only flexible row — header/divider/input are all `shrink-0`
+              (fixed height), so this is the one that grows/shrinks to fill
+              whatever space is left and scrolls independently. */}
+          <div ref={listRef} className="scrollbar-fade flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-3">
             {messages.map((m) => (
               <div key={m.id} className={cn("flex flex-col gap-2", m.role === "user" ? "items-end" : "items-start")}>
                 <div className={cn("flex max-w-[90%] items-end gap-2", m.role === "user" && "flex-row-reverse")}>
@@ -335,7 +352,7 @@ export function AiChatWidget() {
 
           <form
             onSubmit={handleSubmit}
-            className="flex items-center gap-2 border-t border-border p-3"
+            className="flex shrink-0 items-center gap-2 border-t border-border p-3"
             style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
           >
             <div className="relative flex-1">
