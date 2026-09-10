@@ -63,11 +63,15 @@ function AiBrandMark({ className }: { className?: string }) {
 }
 
 // Site-wide floating chat widget (every page) — a shopping-assistant panel,
-// not a small popover. Bottom-left trigger so it never collides with the
-// WhatsApp button (bottom-right on desktop) or the mobile bottom tab bar's
-// elevated "Get a Sample" button (center). Grounds every reply in real page
-// context (`buildContext()`) and real `search_products` tool results
-// (api/ai-chat.ts) — never calls Anthropic directly from the browser.
+// not a small popover. Bottom-right trigger, stacked directly above the
+// desktop floating WhatsApp button (same corner, small gap — never
+// overlapping it) since that's the anchor corner this site already commits
+// to for floating CTAs; on mobile that WhatsApp button is hidden (the tab
+// bar's own elevated "Get a Sample" button, centered, does that job there),
+// so the trigger just sits bottom-right above the tab bar. Grounds every
+// reply in real page context (`buildContext()`) and real `search_products`
+// tool results (api/ai-chat.ts) — never calls Anthropic directly from the
+// browser.
 export function AiChatWidget() {
   const { isOpen, open: openPanel, close: closePanel } = useChatPanel()
   const [messages, setMessages] = useState<ChatMessage[]>(() => [makeGreeting()])
@@ -218,15 +222,15 @@ export function AiChatWidget() {
       {!isOpen && (
         <div
           ref={triggerAreaRef}
-          className="fixed left-5 z-40 flex flex-col items-start gap-2 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] lg:bottom-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))]"
+          className="fixed right-5 z-40 flex flex-col items-end gap-2 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] lg:bottom-[calc(max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))+4.25rem)]"
         >
           {showGreetingBubble && (
-            <div className="animate-in fade-in slide-in-from-bottom-2 relative max-w-56 rounded-2xl rounded-bl-sm border border-border bg-popover p-3 text-sm text-foreground shadow-lg duration-200">
+            <div className="animate-in fade-in slide-in-from-bottom-2 relative max-w-56 rounded-2xl rounded-br-sm border border-border bg-popover p-3 text-sm text-foreground shadow-lg duration-200">
               <button
                 type="button"
                 onClick={dismissGreetingBubble}
                 aria-label="Dismiss"
-                className="absolute -top-2 -right-2 flex size-5 items-center justify-center rounded-full bg-muted text-muted-foreground shadow outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                className="absolute -top-2 -left-2 flex size-5 items-center justify-center rounded-full bg-muted text-muted-foreground shadow outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               >
                 <XIcon className="size-3" />
               </button>
@@ -252,7 +256,7 @@ export function AiChatWidget() {
         <div
           role="dialog"
           aria-label="Khaprail Tiles AI assistant"
-          className="animate-in fade-in slide-in-from-bottom-4 fixed inset-x-0 bottom-0 z-40 flex h-[88vh] max-h-[720px] flex-col overflow-hidden rounded-t-2xl border-t border-border bg-popover shadow-2xl duration-200 lg:inset-x-auto lg:top-auto lg:bottom-[max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))] lg:left-5 lg:h-[min(70vh,640px)] lg:w-[420px] lg:rounded-2xl lg:border"
+          className="animate-in fade-in slide-in-from-bottom-4 fixed inset-x-0 bottom-0 z-40 flex h-[88vh] max-h-[720px] flex-col overflow-hidden rounded-t-2xl border-t border-border bg-popover shadow-2xl duration-200 lg:inset-x-auto lg:top-auto lg:bottom-[calc(max(1.25rem,calc(env(safe-area-inset-bottom)+1rem))+4.25rem)] lg:right-5 lg:h-[min(70vh,640px)] lg:w-[420px] lg:rounded-2xl lg:border"
         >
           <div className="flex items-center gap-2 border-b border-border p-3">
             <AiBrandMark className="size-8" />
