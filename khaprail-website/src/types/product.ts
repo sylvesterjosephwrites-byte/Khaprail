@@ -8,6 +8,12 @@ export interface Product {
   size: string | null
   cover_image_url: string | null
   is_featured: boolean
+  /**
+   * Admin-toggled manual override for the "New Arrival" badge — `true`
+   * always shows it, `false` always hides it, `null` (unset) falls back to
+   * the `created_at`-window heuristic. See `ProductCard`.
+   */
+  is_new: boolean | null
   price: number | null
   created_at: string
 }

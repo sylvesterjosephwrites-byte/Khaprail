@@ -8,7 +8,7 @@ interface UseFeaturedCategoryTabsResult {
   error: string | null
 }
 
-const CATEGORY_COLUMNS = "id, name, slug, parent_id, cover_image_url, sort_order, is_featured, created_at"
+const CATEGORY_COLUMNS = "id, name, slug, parent_id, cover_image_url, sort_order, is_featured, is_trending, created_at"
 
 /**
  * Homepage "Shop by Category" tabs — admin-toggled `categories.is_featured`,

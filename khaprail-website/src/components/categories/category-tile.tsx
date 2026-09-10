@@ -1,4 +1,6 @@
+import { createElement } from "react"
 import { motion } from "framer-motion"
+import { getCategoryIcon } from "@/lib/category-icons"
 import { cn } from "@/lib/utils"
 import type { Category } from "@/types/category"
 
@@ -24,12 +26,30 @@ export function CategoryTile({ category, compact }: CategoryTileProps) {
           compact && "aspect-square"
         )}
       >
-        {category.cover_image_url && (
+        {category.cover_image_url ? (
+          // Explicit width/height (matching the container's own aspect
+          // ratio, not the source file's real dimensions) so the browser
+          // can reserve layout space before the image loads, regardless of
+          // how large/slow the real uploaded file is — several live category
+          // photos are 2MB+ unoptimized PNGs (UX_AUDIT_REPORT.md finding 11).
           <img
             src={category.cover_image_url}
             alt=""
+            width={compact ? 200 : 320}
+            height={compact ? 200 : 200}
             className="h-full w-full object-cover"
           />
+        ) : (
+          // No blank box while no real photo exists yet (26/29 live
+          // categories) — falls back to the same icon system
+          // `CategoryBadgeCircle` uses elsewhere (UX_AUDIT_REPORT.md
+          // finding 8 / 1.1). createElement, not JSX, so a runtime-resolved
+          // icon component doesn't trip oxlint's static-components heuristic.
+          createElement(getCategoryIcon(category.name), {
+            className: cn("text-muted-foreground", compact ? "size-8" : "size-10"),
+            strokeWidth: 1.5,
+            "aria-hidden": "true",
+          })
         )}
       </motion.span>
       <span className={cn("font-medium text-foreground", compact ? "text-sm" : "text-base")}>

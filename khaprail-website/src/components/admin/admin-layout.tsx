@@ -47,7 +47,17 @@ export function AdminLayout() {
           </nav>
         </div>
         <div className="border-t border-sidebar-border p-4">
-          <Button variant="outline" size="sm" className="w-full" onClick={() => void signOut()}>
+          {/* The shared `outline` variant sets `bg-background` (light cream)
+              but no explicit text color, so it inherits this sidebar's
+              cream `text-sidebar-foreground` — invisible cream-on-cream.
+              Overridden here only, not in the shared variant, since
+              `bg-background` is correct for the light storefront elsewhere. */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full text-foreground"
+            onClick={() => void signOut()}
+          >
             Sign Out
           </Button>
         </div>

@@ -30,6 +30,21 @@ export function getRootCategoryId(categories: Category[], categoryId: string): s
   return ancestors.length > 0 ? ancestors[0].id : categoryId
 }
 
+/**
+ * A category's own id plus every descendant category id, recursively —
+ * for category-page product queries/counts that must include products
+ * attached to a subcategory (e.g. `Terracotta Floor Tiles`) when browsing
+ * its parent (`Floor Tiles`), not just products attached directly to the
+ * category itself.
+ */
+export function getDescendantCategoryIds(categories: Category[], categoryId: string): string[] {
+  const ids = [categoryId]
+  for (const child of getCategoryChildren(categories, categoryId)) {
+    ids.push(...getDescendantCategoryIds(categories, child.id))
+  }
+  return ids
+}
+
 export interface CategoryTreeRow {
   category: Category
   depth: number

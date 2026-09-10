@@ -8,7 +8,7 @@ interface UseBestSellersResult {
   error: string | null
 }
 
-const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, price, created_at"
+const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, is_new, price, created_at"
 
 /**
  * "Best Sellers" (homepage + /best-sellers) — ranked by real

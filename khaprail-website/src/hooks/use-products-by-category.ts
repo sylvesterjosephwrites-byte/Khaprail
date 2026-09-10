@@ -8,7 +8,7 @@ interface UseProductsByCategoryResult {
   error: string | null
 }
 
-const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, price, created_at"
+const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, is_new, price, created_at"
 
 /** Every product in a category (exact match, not recursive into children) — used by `/categories/[slug]` and the homepage "Shop by Category" tabs. */
 export function useProductsByCategory(categoryId: string | null): UseProductsByCategoryResult {

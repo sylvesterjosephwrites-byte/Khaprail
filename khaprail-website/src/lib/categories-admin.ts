@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase"
+import { stripDuplicatedExtension } from "@/lib/utils"
 import type { Category } from "@/types/category"
 
 export type CategoryFormValues = Omit<Category, "id" | "created_at">
@@ -7,9 +8,16 @@ export type CategoryFormValues = Omit<Category, "id" | "created_at">
 export async function saveCategory(values: CategoryFormValues, existingId: string | null): Promise<string> {
   if (!supabase) throw new Error("Supabase project not configured yet")
 
+  // The Cover Image URL field is a plain "paste the Storage URL" input, no
+  // upload widget — strip a doubled extension before it's saved (finding 12).
+  const sanitizedValues: CategoryFormValues = {
+    ...values,
+    cover_image_url: values.cover_image_url ? stripDuplicatedExtension(values.cover_image_url) : values.cover_image_url,
+  }
+
   const { data, error } = existingId
-    ? await supabase.from("categories").update(values).eq("id", existingId).select("id").single()
-    : await supabase.from("categories").insert(values).select("id").single()
+    ? await supabase.from("categories").update(sanitizedValues).eq("id", existingId).select("id").single()
+    : await supabase.from("categories").insert(sanitizedValues).select("id").single()
 
   if (error) throw error
   return data.id as string

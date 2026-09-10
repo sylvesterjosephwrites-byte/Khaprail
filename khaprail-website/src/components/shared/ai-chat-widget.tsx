@@ -121,6 +121,12 @@ export function AiChatWidget() {
     return () => document.removeEventListener("pointerdown", handlePointerDown)
   }, [showGreetingBubble])
 
+  // Regressed to a static string during the batch-29 panel rebuild — restores
+  // the documented page-context-aware copy (00-PROGRESS.md batch 28) using
+  // the exact same PDP-detection signal `buildContext()` uses below, so the
+  // two can't drift independently again (UX_AUDIT_REPORT.md finding 14 / 1.9).
+  const chatPlaceholder = productMatch && product ? "Ask about this product…" : "Ask about tiles..."
+
   function buildContext(): ChatAiContext {
     if (productMatch && product) {
       const material = product.product_attributes.find((a) => a.attribute_type.toLowerCase() === "material")?.value
@@ -256,7 +262,7 @@ export function AiChatWidget() {
                 type="button"
                 onClick={handleReset}
                 aria-label="Start a new conversation"
-                className="flex size-8 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+                className="flex size-11 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
               >
                 <RotateCcwIcon className="size-4" />
               </button>
@@ -264,7 +270,7 @@ export function AiChatWidget() {
                 type="button"
                 onClick={closePanel}
                 aria-label="Close chat"
-                className="flex size-8 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
+                className="flex size-11 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
               >
                 <XIcon className="size-4" />
               </button>
@@ -333,7 +339,7 @@ export function AiChatWidget() {
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about tiles..."
+                placeholder={chatPlaceholder}
                 disabled={isStreaming}
                 className="h-11 w-full rounded-full border border-border bg-background pr-4 pl-9 text-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:opacity-50"
               />

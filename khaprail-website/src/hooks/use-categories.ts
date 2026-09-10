@@ -29,7 +29,7 @@ export function useCategories(): UseCategoriesResult {
 
     supabase
       .from("categories")
-      .select("id, name, slug, parent_id, cover_image_url, sort_order, is_featured, created_at")
+      .select("id, name, slug, parent_id, cover_image_url, sort_order, is_featured, is_trending, created_at")
       .order("sort_order", { ascending: true })
       .then(({ data, error: queryError }) => {
         if (cancelled) return

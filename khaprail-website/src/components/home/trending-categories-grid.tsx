@@ -3,11 +3,11 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import { CategoryBadgeCircle } from "@/components/shared/category-badge-circle"
 import { useCategories } from "@/hooks/use-categories"
-import { getRootCategories } from "@/lib/category-tree"
+import { useCategoryProductCounts } from "@/hooks/use-category-product-counts"
+import { getRootCategories, getRootCategoryId } from "@/lib/category-tree"
 
-const FEATURE_ROW_COUNT = 3
-const GRID_COUNT = 4
 const NEW_WINDOW_DAYS = 30
+const SKELETON_COUNT = 4
 
 function isNew(createdAt: string): boolean {
   const ageMs = Date.now() - new Date(createdAt).getTime()
@@ -16,13 +16,27 @@ function isNew(createdAt: string): boolean {
 
 // "Trending/Collections grid" (10-HOMEPAGE-SPEC.md) — circular photo badges
 // with colored fills (2026-08-25 restyle, matching Featured Categories'
-// treatment), picking up after the 3-image feature row's picks so the
-// homepage doesn't repeat the same categories twice. "NEW" ribbon is real
-// (`created_at` within a short window), never decorative (02-DESIGN-SYSTEM.md
-// Von Restorff isolation effect + "honest data only").
+// treatment). Which categories show here is real admin curation
+// (`categories.is_trending`), not a positional array slice — and even a
+// trending-flagged category only renders once it has real products
+// (directly or via a subcategory, same rolled-up-to-root count as
+// `CategoryShowcase`), so this never links to a dead "coming soon" page
+// (UX_AUDIT_REPORT.md finding 3 / 5.3). "NEW" ribbon is real (`created_at`
+// within a short window), never decorative (02-DESIGN-SYSTEM.md Von
+// Restorff isolation effect + "honest data only").
 export function TrendingCategoriesGrid() {
-  const { categories, isLoading, error } = useCategories()
-  const trending = getRootCategories(categories).slice(FEATURE_ROW_COUNT, FEATURE_ROW_COUNT + GRID_COUNT)
+  const { categories, isLoading: categoriesLoading, error } = useCategories()
+  const { counts, isLoading: countsLoading } = useCategoryProductCounts()
+  const isLoading = categoriesLoading || countsLoading
+
+  const rootCounts = new Map<string, number>()
+  for (const [categoryId, count] of counts.entries()) {
+    const rootId = getRootCategoryId(categories, categoryId)
+    rootCounts.set(rootId, (rootCounts.get(rootId) ?? 0) + count)
+  }
+  const trending = getRootCategories(categories).filter(
+    (c) => c.is_trending && (rootCounts.get(c.id) ?? 0) > 0
+  )
 
   if (error || (!isLoading && trending.length === 0)) return null
 
@@ -34,7 +48,7 @@ export function TrendingCategoriesGrid() {
       </div>
       <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
         {isLoading
-          ? Array.from({ length: GRID_COUNT }).map((_, i) => (
+          ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (
               <div key={i} className="flex flex-col items-center gap-2">
                 <Skeleton className="size-28 rounded-full" />
                 <Skeleton className="h-4 w-3/4" />

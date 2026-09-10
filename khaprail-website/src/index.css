@@ -80,7 +80,13 @@
     --secondary: #E8DCC8;
     --secondary-foreground: #3B2A20;
     --muted: #F1E9DD;
-    --muted-foreground: #7A6A58;
+    /* Darkened from #7A6A58 — that value read at 4.33:1 on full-opacity
+       --muted panels (fails WCAG AA normal text, 4.5:1 needed); #746554
+       clears it (4.67:1) while staying the same warm brown. The 50%-opacity
+       usage (bg-muted/50, blending toward the lighter page background) was
+       already passing and only gets safer margin from this change
+       (UX_AUDIT_REPORT.md finding 9 / 1.4). */
+    --muted-foreground: #746554;
     --accent: #C96A3D;
     --accent-foreground: #FAF6F0;
     --destructive: oklch(0.577 0.245 27.325);

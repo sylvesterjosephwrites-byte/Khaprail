@@ -7,8 +7,17 @@ import type { Product } from "@/types/product"
 
 const NEW_ARRIVAL_WINDOW_DAYS = 60
 
-function isNewArrival(createdAt: string): boolean {
-  const ageMs = Date.now() - new Date(createdAt).getTime()
+// `is_new` is a real editorial decision (admin checkbox, tri-state: true
+// always shows the badge, false always hides it) and always wins when set.
+// The `created_at`-window check only kicks in when nobody has made that
+// call yet (`is_new === null`) — it stays a real "this really is recent"
+// signal for future products added days/weeks apart, but the whole catalog
+// being bulk-inserted in one session meant it covered almost every card
+// with no real signal value, so existing rows were explicitly backfilled
+// to `false` rather than left to the fallback (UX_AUDIT_REPORT.md finding 3).
+function isNewArrival(product: Pick<Product, "is_new" | "created_at">): boolean {
+  if (product.is_new !== null) return product.is_new
+  const ageMs = Date.now() - new Date(product.created_at).getTime()
   return ageMs < NEW_ARRIVAL_WINDOW_DAYS * 24 * 60 * 60 * 1000
 }
 
@@ -18,10 +27,10 @@ interface ProductCardProps {
 
 // Listing card per 04-PRODUCT-LISTING-FILTERS.md: white/light photo tile on
 // a dark card, gold price (only when a real `price` is set), solid blue pill
-// "Get a Sample" CTA. "New Arrival" is computed from the real `created_at`
-// column, never manually curated — no generic "Deal"/percent-off badge was
-// added since no real discount data exists (02-DESIGN-SYSTEM.md "honest
-// data only").
+// "Get a Sample" CTA. "New Arrival" is a real editorial decision (`is_new`),
+// falling back to `created_at` only when unset — no generic "Deal"/percent-off
+// badge was added since no real discount data exists (02-DESIGN-SYSTEM.md
+// "honest data only").
 export function ProductCard({ product }: ProductCardProps) {
   return (
     <Card className="gap-0 overflow-hidden p-0">
@@ -30,7 +39,7 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.cover_image_url && (
             <img src={product.cover_image_url} alt="" className="h-full w-full object-cover" />
           )}
-          {isNewArrival(product.created_at) && (
+          {isNewArrival(product) && (
             <Badge className="absolute top-2 left-2 bg-navy text-navy-foreground">New Arrival</Badge>
           )}
         </div>

@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase"
+import { stripDuplicatedExtension } from "@/lib/utils"
 import type { OfferCard } from "@/types/offer-card"
 
 export type OfferCardFormValues = Omit<OfferCard, "id" | "created_at" | "updated_at">
@@ -7,7 +8,13 @@ export type OfferCardFormValues = Omit<OfferCard, "id" | "created_at" | "updated
 export async function saveOfferCard(values: OfferCardFormValues, existingId: string | null): Promise<string> {
   if (!supabase) throw new Error("Supabase project not configured yet")
 
-  const row = { ...values, updated_at: new Date().toISOString() }
+  // The Image URL field is a plain "paste the Storage URL" input, no upload
+  // widget — strip a doubled extension before it's saved (finding 12).
+  const row = {
+    ...values,
+    image_url: stripDuplicatedExtension(values.image_url),
+    updated_at: new Date().toISOString(),
+  }
 
   const { data, error } = existingId
     ? await supabase.from("offer_cards").update(row).eq("id", existingId).select("id").single()

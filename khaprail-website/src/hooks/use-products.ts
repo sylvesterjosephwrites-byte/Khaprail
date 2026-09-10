@@ -12,22 +12,26 @@ interface UseProductsResult {
   error: string | null
 }
 
-const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, price, created_at"
+const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, is_new, price, created_at"
 
 /**
  * Reads the `products` table, applying AND-across-filter-types /
  * OR-within-a-filter-type semantics against `product_attributes`
  * (04-PRODUCT-LISTING-FILTERS.md). With no active filters, returns every
  * product sorted per `sort`. Pass `categoryId` to scope to one category
- * (11-CATEGORY-LISTING-SPEC.md's listing template), exact match only. Pass
- * `searchQuery` (the /search page's `?q=`) to additionally require a real
- * name/category match — combined with any active filters via the same
- * id-intersection approach, not a second/competing query path.
+ * (11-CATEGORY-LISTING-SPEC.md's listing template) — a single id matches
+ * that category exactly, an array (e.g. `getDescendantCategoryIds`) also
+ * includes products attached to any of its subcategories, so a root
+ * category page shows real inventory filed under its children instead of
+ * a false "coming soon". Pass `searchQuery` (the /search page's `?q=`) to
+ * additionally require a real name/category match — combined with any
+ * active filters via the same id-intersection approach, not a
+ * second/competing query path.
  */
 export function useProducts(
   filters: ActiveFilters,
   sort: SortOption,
-  categoryId?: string | null,
+  categoryId?: string | string[] | null,
   searchQuery?: string
 ): UseProductsResult {
   const [products, setProducts] = useState<Product[]>([])
@@ -42,6 +46,10 @@ export function useProducts(
       .map(([type, values]) => [type, [...values].sort()] as const)
       .sort(([a], [b]) => a.localeCompare(b))
   )
+  // Stable primitive to depend on below — `categoryId` can be a fresh array
+  // literal on every render (e.g. `getDescendantCategoryIds(...)` computed
+  // inline by a caller), which would otherwise refetch on every render.
+  const categoryKey = Array.isArray(categoryId) ? categoryId.slice().sort().join(",") : (categoryId ?? "")
 
   useEffect(() => {
     if (!supabase) return
@@ -87,9 +95,14 @@ export function useProducts(
         searchIds = await findProductIdsMatchingQuery(client, searchQuery)
       }
 
+      // Derived from `categoryKey` (already in the deps array below), not
+      // the raw `categoryId` param, so this effect doesn't need to close
+      // over it directly.
+      const categoryIds = categoryKey ? categoryKey.split(",") : []
+
       let query = client.from("products").select(PRODUCT_COLUMNS)
-      if (categoryId) {
-        query = query.eq("category_id", categoryId)
+      if (categoryIds.length > 0) {
+        query = query.in("category_id", categoryIds)
       }
       if (matchingIds !== null) {
         query = query.in("id", [...matchingIds])
@@ -141,7 +154,7 @@ export function useProducts(
     return () => {
       cancelled = true
     }
-  }, [filtersKey, sort, categoryId, searchQuery])
+  }, [filtersKey, sort, categoryKey, searchQuery])
 
   return { products, facetCounts, isLoading, error }
 }

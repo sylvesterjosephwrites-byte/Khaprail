@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { ScrollToTop } from "@/components/layout/scroll-to-top"
 import { SiteLayout } from "@/components/layout/site-layout"
 import { Home } from "@/pages/home"
 import { CategoriesIndex } from "@/pages/categories-index"
@@ -38,6 +39,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route element={<SiteLayout />}>
             <Route path="/" element={<Home />} />

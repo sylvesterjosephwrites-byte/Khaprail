@@ -79,7 +79,13 @@ function TrendingTileCard({ tile, className }: { tile: TrendingTile; className?:
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
       {tile.show_new_badge && (
-        <span className="absolute top-3 left-3 z-10 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent-foreground">
+        // `bg-accent`/`text-accent-foreground` measured 3.47:1 here (fails
+        // WCAG AA at this size) — swapped to `bg-navy`/`text-navy-foreground`,
+        // the same high-contrast (12.67:1) treatment the "New Arrival" and
+        // Trending Categories "NEW" badges already use elsewhere, so this
+        // reads as one consistent badge style instead of a third variant
+        // (UX_AUDIT_REPORT.md finding 6 / 1.5).
+        <span className="absolute top-3 left-3 z-10 rounded-full bg-navy px-3 py-1 text-xs font-semibold text-navy-foreground">
           NEW
         </span>
       )}

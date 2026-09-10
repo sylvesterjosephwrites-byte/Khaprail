@@ -8,20 +8,27 @@ interface UseFeaturedProductsResult {
   error: string | null
 }
 
-const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, price, created_at"
+const PRODUCT_COLUMNS = "id, name, slug, category_id, size, cover_image_url, is_featured, is_new, price, created_at"
 
 /**
  * "Top Picks Today" (category listing pages) — admin-toggled `is_featured`
  * flag. Real editorial curation, not a fabricated ranking, but no longer
  * used for the homepage's "Best Sellers" rail — see `use-best-sellers.ts`,
- * which ranks by real `sample_inquiries` volume instead.
+ * which ranks by real `sample_inquiries` volume instead. `categoryId` can
+ * be a single id (exact match) or an array (e.g. `getDescendantCategoryIds`)
+ * so a root category page's "Top Picks" stays consistent with its main
+ * product grid, which also includes subcategory products.
  */
-export function useFeaturedProducts(limit?: number, categoryId?: string | null): UseFeaturedProductsResult {
+export function useFeaturedProducts(
+  limit?: number,
+  categoryId?: string | string[] | null
+): UseFeaturedProductsResult {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(() => supabase !== null)
   const [error, setError] = useState<string | null>(() =>
     supabase ? null : "Supabase project not configured yet"
   )
+  const categoryKey = Array.isArray(categoryId) ? categoryId.slice().sort().join(",") : (categoryId ?? "")
 
   useEffect(() => {
     if (!supabase) return
@@ -32,7 +39,11 @@ export function useFeaturedProducts(limit?: number, categoryId?: string | null):
       .select(PRODUCT_COLUMNS)
       .eq("is_featured", true)
       .order("created_at", { ascending: false })
-    if (categoryId) query = query.eq("category_id", categoryId)
+    // Derived from `categoryKey` (already in the deps array below), not the
+    // raw `categoryId` param, so this effect doesn't need to close over it
+    // directly.
+    const categoryIds = categoryKey ? categoryKey.split(",") : []
+    if (categoryIds.length > 0) query = query.in("category_id", categoryIds)
     if (limit) query = query.limit(limit)
 
     query.then(({ data, error: queryError }) => {
@@ -48,7 +59,7 @@ export function useFeaturedProducts(limit?: number, categoryId?: string | null):
     return () => {
       cancelled = true
     }
-  }, [limit, categoryId])
+  }, [limit, categoryKey])
 
   return { products, isLoading, error }
 }

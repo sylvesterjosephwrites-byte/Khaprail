@@ -29,7 +29,7 @@ export function useCategory(slug: string | undefined): UseCategoryResult {
 
     supabase
       .from("categories")
-      .select("id, name, slug, parent_id, cover_image_url, sort_order, is_featured, created_at")
+      .select("id, name, slug, parent_id, cover_image_url, sort_order, is_featured, is_trending, created_at")
       .eq("slug", slug)
       .maybeSingle()
       .then(({ data, error: queryError }) => {

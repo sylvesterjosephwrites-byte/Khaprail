@@ -35,7 +35,15 @@ export function CategoryBadgeCircle({ category, index = 0, size = "default" }: C
       )}
     >
       {category.cover_image_url ? (
-        <img src={category.cover_image_url} alt="" className="h-full w-full object-cover" />
+        // Explicit width/height (1:1, matching this circle) reserves layout
+        // space before load (UX_AUDIT_REPORT.md finding 11).
+        <img
+          src={category.cover_image_url}
+          alt=""
+          width={size === "lg" ? 224 : 160}
+          height={size === "lg" ? 224 : 160}
+          className="h-full w-full object-cover"
+        />
       ) : (
         // createElement (not JSX) so a runtime-resolved icon component
         // doesn't trip oxlint's static-components heuristic — it's a stable

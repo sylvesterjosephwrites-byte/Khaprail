@@ -18,6 +18,13 @@ export function FeatureRow() {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6">
+      {/* Had no heading element at all — see featured-categories-row.tsx's
+          comment (UX_AUDIT_REPORT.md finding 13 / 1.7). "Popular Categories"
+          since "Shop by Category" already names a different section further
+          down the page (shop-by-category-section.tsx). */}
+      <h2 className="mb-8 text-center font-heading text-4xl font-semibold text-foreground sm:text-5xl">
+        Popular Categories
+      </h2>
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
         {isLoading
           ? Array.from({ length: FEATURE_COUNT }).map((_, i) => (
@@ -34,9 +41,15 @@ export function FeatureRow() {
               >
                 <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl bg-panel-navy shadow-sm">
                   {category.cover_image_url && (
+                    // Explicit width/height matching the container's own
+                    // 4:3 ratio reserves layout space before load — several
+                    // live category photos are 2MB+ unoptimized PNGs
+                    // (UX_AUDIT_REPORT.md finding 11).
                     <img
                       src={category.cover_image_url}
                       alt=""
+                      width={400}
+                      height={300}
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   )}

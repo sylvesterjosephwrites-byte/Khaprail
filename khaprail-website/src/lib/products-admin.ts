@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase"
+import { stripDuplicatedExtension } from "@/lib/utils"
 
 export interface ProductFormValues {
   name: string
@@ -11,6 +12,8 @@ export interface ProductFormValues {
   country_of_origin: string
   cover_image_url: string | null
   is_featured: boolean
+  /** "New Arrival" badge override — see `types/product.ts`. The form always writes an explicit true/false, never leaves it unset. */
+  is_new: boolean
   brand: string | null
   merchant: string | null
   sku: string | null
@@ -41,9 +44,17 @@ export async function saveProduct(
 ): Promise<string> {
   if (!supabase) throw new Error("Supabase project not configured yet")
 
+  // Every image URL field here (cover + the Images repeater) is a plain
+  // "paste the Storage URL" input, no upload widget — strip a doubled
+  // extension before it's saved (finding 12).
+  const sanitizedValues: ProductFormValues = {
+    ...values,
+    cover_image_url: values.cover_image_url ? stripDuplicatedExtension(values.cover_image_url) : values.cover_image_url,
+  }
+
   const { data, error } = existingId
-    ? await supabase.from("products").update(values).eq("id", existingId).select("id").single()
-    : await supabase.from("products").insert(values).select("id").single()
+    ? await supabase.from("products").update(sanitizedValues).eq("id", existingId).select("id").single()
+    : await supabase.from("products").insert(sanitizedValues).select("id").single()
 
   if (error) throw error
   const productId = data.id as string
@@ -57,7 +68,11 @@ export async function saveProduct(
 
   const imageRows = images
     .filter((img) => img.image_url.trim())
-    .map((img, index) => ({ product_id: productId, image_url: img.image_url, sort_order: index }))
+    .map((img, index) => ({
+      product_id: productId,
+      image_url: stripDuplicatedExtension(img.image_url),
+      sort_order: index,
+    }))
   const attributeRows = attributes
     .filter((a) => a.attribute_type.trim() && a.value.trim())
     .map((a) => ({ product_id: productId, attribute_type: a.attribute_type, value: a.value }))

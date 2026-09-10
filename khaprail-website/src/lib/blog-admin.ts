@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase"
+import { stripDuplicatedExtension } from "@/lib/utils"
 import type { BlogPostFormValues, BlogFaq } from "@/types/blog"
 
 export interface FaqDraft {
@@ -18,9 +19,16 @@ export async function saveBlogPost(
 ): Promise<string> {
   if (!supabase) throw new Error("Supabase project not configured yet")
 
+  // Every image URL field here is a plain "paste the Storage URL" input, no
+  // upload widget — strip a doubled extension before it's saved (finding 12).
+  const sanitizedValues: BlogPostFormValues = {
+    ...values,
+    cover_image_url: values.cover_image_url ? stripDuplicatedExtension(values.cover_image_url) : values.cover_image_url,
+  }
+
   const { data, error } = existingId
-    ? await supabase.from("blog_posts").update(values).eq("id", existingId).select("id").single()
-    : await supabase.from("blog_posts").insert(values).select("id").single()
+    ? await supabase.from("blog_posts").update(sanitizedValues).eq("id", existingId).select("id").single()
+    : await supabase.from("blog_posts").insert(sanitizedValues).select("id").single()
 
   if (error) throw error
   const postId = data.id as string

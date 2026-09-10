@@ -33,6 +33,7 @@ const EMPTY_VALUES: ProductFormValues = {
   country_of_origin: "Pakistan",
   cover_image_url: null,
   is_featured: false,
+  is_new: false,
   brand: "Khaprail Tiles",
   merchant: null,
   sku: null,
@@ -83,7 +84,7 @@ export function AdminProductEditor() {
       .from("products")
       .select(
         `name, slug, category_id, description, size, thickness, finish,
-         country_of_origin, cover_image_url, is_featured,
+         country_of_origin, cover_image_url, is_featured, is_new,
          brand, merchant, sku, availability, manufacturer, price,
          ai_summary, ai_summary_generated_at,
          product_images ( image_url ),
@@ -98,7 +99,11 @@ export function AdminProductEditor() {
             ai_summary_generated_at: string | null
           }
           const { product_images, product_attributes, ai_summary, ai_summary_generated_at, ...formValues } = fetched
-          setValues(formValues)
+          // A row could still hold `null` (unset — falls back to the
+          // `created_at` heuristic, see types/product.ts) if it was never
+          // touched by this form; normalize to `false` here since the form
+          // itself always writes an explicit true/false.
+          setValues({ ...formValues, is_new: formValues.is_new ?? false })
           setImages(product_images.map((img) => ({ image_url: img.image_url })))
           setAttributes(product_attributes)
           setAiSummary(ai_summary)
@@ -287,6 +292,13 @@ export function AdminProductEditor() {
               onCheckedChange={(checked) => updateField("is_featured", checked === true)}
             />
             Featured (shown in "Top Picks Today" on its category page)
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <Checkbox
+              checked={values.is_new}
+              onCheckedChange={(checked) => updateField("is_new", checked === true)}
+            />
+            Show "New Arrival" badge (overrides the automatic recently-added check)
           </label>
         </section>
 

@@ -87,7 +87,7 @@ export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="size-9 shrink-0"
+                className="size-11 shrink-0"
                 onClick={() => setIsSearchOpen(false)}
                 aria-label="Back to menu"
               >
@@ -160,7 +160,7 @@ export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
         ) : (
           <>
             <div className="flex items-center gap-3 border-b border-border p-4">
-              <SheetClose render={<Button variant="ghost" size="icon" className="size-9" />}>
+              <SheetClose render={<Button variant="ghost" size="icon" className="size-11" />}>
                 <XIcon />
                 <span className="sr-only">Close menu</span>
               </SheetClose>
@@ -168,7 +168,7 @@ export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="ml-auto size-9"
+                className="ml-auto size-11"
                 onClick={() => setIsSearchOpen(true)}
                 aria-label="Search"
               >
@@ -178,7 +178,7 @@ export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
                 type="button"
                 onClick={handleOpenChat}
                 aria-label="Ask the AI assistant"
-                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground outline-none transition-transform active:scale-95"
+                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground outline-none transition-transform active:scale-95"
               >
                 <SparklesIcon className="size-4" />
               </button>

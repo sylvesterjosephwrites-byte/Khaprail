@@ -56,9 +56,14 @@ export function CategoryShowcase() {
                 >
                   <div className="relative flex aspect-[3/4] w-full items-center justify-center overflow-hidden rounded-2xl bg-foreground/10 shadow-sm">
                     {category.cover_image_url && (
+                      // Explicit width/height matching the container's own
+                      // 3:4 ratio reserves layout space before load
+                      // (UX_AUDIT_REPORT.md finding 11).
                       <img
                         src={category.cover_image_url}
                         alt=""
+                        width={300}
+                        height={400}
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                     )}

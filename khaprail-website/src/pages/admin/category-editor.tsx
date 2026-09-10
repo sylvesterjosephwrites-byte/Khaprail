@@ -27,6 +27,7 @@ const EMPTY_VALUES: CategoryFormValues = {
   cover_image_url: null,
   sort_order: 0,
   is_featured: false,
+  is_trending: false,
 }
 
 // /admin/categories/new and /admin/categories/:id/edit.
@@ -47,7 +48,7 @@ export function AdminCategoryEditor() {
     }
     supabase
       .from("categories")
-      .select("id, name, slug, parent_id, cover_image_url, sort_order, is_featured, created_at")
+      .select("id, name, slug, parent_id, cover_image_url, sort_order, is_featured, is_trending, created_at")
       .eq("id", id)
       .maybeSingle()
       .then(({ data }) => {
@@ -155,6 +156,13 @@ export function AdminCategoryEditor() {
             onCheckedChange={(checked) => updateField("is_featured", checked === true)}
           />
           Featured (shown as a tab in the homepage "Shop by Category" section)
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <Checkbox
+            checked={values.is_trending}
+            onCheckedChange={(checked) => updateField("is_trending", checked === true)}
+          />
+          Trending (shown in the homepage "Trending Categories" grid — only if it also has real products)
         </label>
 
         {saveError && (
