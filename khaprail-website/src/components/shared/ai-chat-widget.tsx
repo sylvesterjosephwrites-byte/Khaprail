@@ -15,6 +15,7 @@ import {
   type ChatHistoryMessage,
   type ChatProductCard,
 } from "@/lib/ai-chat-client"
+import { useChatPanel } from "@/lib/chat-panel-context"
 import { cn } from "@/lib/utils"
 
 interface ChatMessage {
@@ -68,7 +69,7 @@ function AiBrandMark({ className }: { className?: string }) {
 // context (`buildContext()`) and real `search_products` tool results
 // (api/ai-chat.ts) — never calls Anthropic directly from the browser.
 export function AiChatWidget() {
-  const [isOpen, setIsOpen] = useState(false)
+  const { isOpen, open: openPanel, close: closePanel } = useChatPanel()
   const [messages, setMessages] = useState<ChatMessage[]>(() => [makeGreeting()])
   const [input, setInput] = useState("")
   const [isStreaming, setIsStreaming] = useState(false)
@@ -197,7 +198,7 @@ export function AiChatWidget() {
   }
 
   function handleOpen() {
-    setIsOpen(true)
+    openPanel()
     dismissGreetingBubble()
   }
 
@@ -261,7 +262,7 @@ export function AiChatWidget() {
               </button>
               <button
                 type="button"
-                onClick={() => setIsOpen(false)}
+                onClick={closePanel}
                 aria-label="Close chat"
                 className="flex size-8 items-center justify-center rounded-full text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
               >

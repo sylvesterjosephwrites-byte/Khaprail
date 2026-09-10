@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { MenuIcon, XIcon, DownloadIcon, SearchIcon, ArrowLeftIcon } from "lucide-react"
+import { MenuIcon, XIcon, DownloadIcon, SearchIcon, ArrowLeftIcon, SparklesIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { buildWhatsAppUrl, DEFAULT_WHATSAPP_MESSAGE } from "@/lib/whatsapp"
 import { getRootCategories, getCategoryChildren } from "@/lib/category-tree"
 import { useMobileDrawer } from "@/lib/mobile-drawer-context"
+import { useChatPanel } from "@/lib/chat-panel-context"
 import { useProductSearch } from "@/hooks/use-product-search"
 import type { Category } from "@/types/category"
 
@@ -35,6 +36,7 @@ interface MobileNavProps {
 // with the same debounced live-results behavior as the desktop navbar.
 export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
   const { categoryDrawerOpen, setCategoryDrawerOpen } = useMobileDrawer()
+  const { open: openChatPanel } = useChatPanel()
   const [openCategoryId, setOpenCategoryId] = useState<string | null>(null)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [query, setQuery] = useState("")
@@ -63,6 +65,11 @@ export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
     if (!trimmed) return
     setCategoryDrawerOpen(false)
     navigate(`/search?q=${encodeURIComponent(trimmed)}`)
+  }
+
+  function handleOpenChat() {
+    setCategoryDrawerOpen(false)
+    openChatPanel()
   }
 
   return (
@@ -167,6 +174,14 @@ export function MobileNav({ categories, isLoading, error }: MobileNavProps) {
               >
                 <SearchIcon />
               </Button>
+              <button
+                type="button"
+                onClick={handleOpenChat}
+                aria-label="Ask the AI assistant"
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground outline-none transition-transform active:scale-95"
+              >
+                <SparklesIcon className="size-4" />
+              </button>
             </div>
 
             <nav className="flex flex-1 flex-col overflow-y-auto px-4 py-2">

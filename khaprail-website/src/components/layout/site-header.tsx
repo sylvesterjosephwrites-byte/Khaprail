@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { SparklesIcon } from "lucide-react"
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -12,6 +13,7 @@ import { MobileNav } from "@/components/nav/mobile-nav"
 import { SiteSearch } from "@/components/nav/site-search"
 import { NAV_LINKS } from "@/lib/nav-links"
 import { useCategories } from "@/hooks/use-categories"
+import { useChatPanel } from "@/lib/chat-panel-context"
 import { buildWhatsAppUrl, DEFAULT_WHATSAPP_MESSAGE } from "@/lib/whatsapp"
 import { cn } from "@/lib/utils"
 
@@ -32,6 +34,7 @@ const NAV_ITEM_CLASS =
 // 00-PROGRESS.md) and a solid navy sub-nav strip underneath.
 export function SiteHeader() {
   const { categories, isLoading, error } = useCategories()
+  const { open: openChatPanel } = useChatPanel()
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
@@ -83,6 +86,14 @@ export function SiteHeader() {
             </NavigationMenuList>
           </NavigationMenu>
           <SiteSearch />
+          <button
+            type="button"
+            onClick={openChatPanel}
+            aria-label="Ask the AI assistant"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground outline-none transition-transform hover:scale-105 focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-95"
+          >
+            <SparklesIcon className="size-4" />
+          </button>
         </div>
       </div>
     </header>
