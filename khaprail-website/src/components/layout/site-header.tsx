@@ -49,10 +49,16 @@ export function SiteHeader() {
   return (
     <header className={cn("sticky top-0 z-40 transition-shadow duration-200", isScrolled && "shadow-lg")}>
       <div className="bg-white">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
           <Link to="/" className="shrink-0 font-heading text-3xl font-bold text-primary">
             Khaprail Tiles
           </Link>
+          {/* Centered between the logo and "Get a Sample" — moved here from
+              the navy nav strip below (2026-09-10); the search bar itself
+              (size/styling/behavior) is unchanged, see site-search.tsx. */}
+          <div className="hidden flex-1 justify-center lg:flex">
+            <SiteSearch />
+          </div>
           <div className="flex items-center gap-2">
             <Button
               className="hidden h-11 rounded-full px-5 text-base lg:inline-flex"
@@ -85,12 +91,11 @@ export function SiteHeader() {
               ))}
             </NavigationMenuList>
           </NavigationMenu>
-          <SiteSearch />
           <button
             type="button"
             onClick={openChatPanel}
             aria-label="Ask the AI assistant"
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground outline-none transition-transform hover:scale-105 focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-95"
+            className="ml-auto flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground outline-none transition-transform hover:scale-105 focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-95"
           >
             <SparklesIcon className="size-4" />
           </button>

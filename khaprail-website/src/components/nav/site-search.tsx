@@ -13,6 +13,15 @@ import { cn } from "@/lib/utils"
 // for. Debounced live results (`useProductSearch`) render as an
 // accessible combobox/listbox popup — real `products`/`categories` rows
 // only, capped at 6 (01-SITE-MAP.md's search requirement).
+//
+// Colors were originally tuned for the dark navy strip this sat in
+// (`border-navy-foreground/25`/`bg-navy-foreground/10`/`text-navy-foreground`).
+// Moved to the white top bar 2026-09-10 (see 00-PROGRESS.md) — recolored to
+// the same light-background token pair the filter/tab pills use
+// (`border-border`/`bg-background`/`text-foreground`) since the navy-tuned
+// values were nearly invisible against white. No `ml-auto` anymore either —
+// it's now centered by its parent wrapper in `site-header.tsx` instead of
+// pushed right within the old navy strip.
 export function SiteSearch() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -75,9 +84,9 @@ export function SiteSearch() {
   const listboxId = "site-search-listbox"
 
   return (
-    <div ref={containerRef} className="relative ml-auto hidden w-full max-w-xs lg:block">
-      <div className="group flex h-9 items-center gap-2 rounded-full border border-navy-foreground/25 bg-navy-foreground/10 px-3.5 transition-colors focus-within:border-border focus-within:bg-background">
-        <SearchIcon className="size-4 shrink-0 text-navy-foreground/70 group-focus-within:text-muted-foreground" />
+    <div ref={containerRef} className="relative hidden w-full max-w-xs lg:block">
+      <div className="group flex h-9 items-center gap-2 rounded-full border border-border bg-background px-3.5 transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
+        <SearchIcon className="size-4 shrink-0 text-muted-foreground" />
         <input
           role="combobox"
           aria-expanded={showDropdown}
@@ -94,7 +103,7 @@ export function SiteSearch() {
           onClick={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder="Search khaprail, disco tile..."
-          className="h-full w-full bg-transparent text-sm text-navy-foreground placeholder:text-navy-foreground/60 outline-none focus:text-foreground focus:placeholder:text-muted-foreground"
+          className="h-full w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
         />
       </div>
 
