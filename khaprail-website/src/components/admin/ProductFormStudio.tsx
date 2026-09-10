@@ -16,8 +16,10 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { SlugInputWithLock } from "./SlugInputWithLock"
 import { CoverImageDropzone, ImageGallery, type GalleryImage } from "./ImageDropzone"
 import { AiSlugRecommendations } from "./AiSlugRecommendations"
+import { AiSummaryInspector } from "./AiSummaryInspector"
 import { cn } from "@/lib/utils"
 import type { ProductFormValues, ImageDraft, AttributeDraft } from "@/lib/products-admin"
+import type { ProductAiContext } from "@/lib/ai-chat-client"
 
 const NO_CATEGORY = "__none__"
 
@@ -41,6 +43,10 @@ export interface ProductFormStudioProps {
   onSubmit: (e: FormEvent) => void
   /** Called when an AI slug suggestion is clicked — sets slug + marks as locked. */
   onSlugChange: (slug: string) => void
+  /** Supabase access token for the AI summary generator. */
+  accessToken: string | null
+  /** Fired when the user clicks "Apply to Description" in the AI summary panel. */
+  onApplySummary: (summary: string) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -91,6 +97,8 @@ export function ProductFormStudio({
   onAttributesChange,
   onSubmit,
   onSlugChange,
+  accessToken,
+  onApplySummary,
 }: ProductFormStudioProps) {
   if (isLoading) {
     return (
@@ -118,6 +126,22 @@ export function ProductFormStudio({
   const galleryImages: GalleryImage[] = images.map((img) => ({ url: img.image_url }))
   function handleGalleryChange(next: GalleryImage[]) {
     onImagesChange(next.map((g) => ({ image_url: g.url })))
+  }
+
+  // Build the AI context object from current form state
+  const materialAttr = attributes.find((a) => a.attribute_type.toLowerCase() === "material")?.value
+  const applicationAttrs = attributes
+    .filter((a) => a.attribute_type.toLowerCase() === "application")
+    .map((a) => a.value)
+  const aiContext: ProductAiContext = {
+    name: values.name,
+    material: materialAttr,
+    finish: values.finish,
+    size: values.size,
+    thickness: values.thickness,
+    country_of_origin: values.country_of_origin,
+    price: values.price,
+    applications: applicationAttrs.length > 0 ? applicationAttrs : undefined,
   }
 
   return (
@@ -415,8 +439,16 @@ export function ProductFormStudio({
             </StudioCard>
           </div>
 
-          {/* -- Right Column (5/12) ------------------------------- */}
-          <div className="flex flex-col gap-6 lg:col-span-5">
+          {/* -- Right Column (5/12) — Sticky Inspector --------------- */}
+          <div className="flex flex-col gap-6 lg:sticky lg:top-20 lg:col-span-5 lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto lg:pb-6">
+            {/* AI Product Summary */}
+            <AiSummaryInspector
+              productContext={aiContext}
+              accessToken={accessToken}
+              currentDescription={values.description}
+              onApply={onApplySummary}
+            />
+
             {/* AI Slug & SEO */}
             <AiSlugRecommendations
               title={values.name}

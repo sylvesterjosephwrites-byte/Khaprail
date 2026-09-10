@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { ProductFormStudio } from "@/components/admin/ProductFormStudio"
 import { useCategories } from "@/hooks/use-categories"
+import { useAuth } from "@/lib/auth-context"
 import { supabase } from "@/lib/supabase"
 import { saveProduct, type ProductFormValues, type ImageDraft, type AttributeDraft } from "@/lib/products-admin"
 import { flattenCategoryTree } from "@/lib/category-tree"
@@ -38,6 +39,7 @@ interface FetchedProduct extends ProductFormValues {
 export function AdminProductEditor() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const { session } = useAuth()
   const { categories, isLoading: categoriesLoading } = useCategories()
   const categoryRows = flattenCategoryTree(categories)
 
@@ -111,6 +113,8 @@ export function AdminProductEditor() {
       onAttributesChange={setAttributes}
       onSubmit={handleSubmit}
       onSlugChange={(slug) => updateField("slug", slug)}
+      accessToken={session?.access_token ?? null}
+      onApplySummary={(summary) => updateField("description", summary)}
     />
   )
 }

@@ -1,5 +1,5 @@
 ﻿import { useCallback, useRef, useState } from "react"
-import { UploadCloudIcon, Trash2Icon, PlusIcon } from "lucide-react"
+import { UploadCloudIcon, Trash2Icon, PlusIcon, ImageIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 // ---------------------------------------------------------------------------
@@ -29,7 +29,7 @@ export function CoverImageDropzone({ value, onChange }: CoverImageDropzoneProps)
       <label className="text-sm font-medium text-foreground">Cover Image</label>
       <div
         className={cn(
-          "relative flex aspect-[16/10] cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 border-dashed transition-colors",
+          "group relative flex aspect-[16/10] cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 border-dashed transition-colors",
           isDragging
             ? "border-[#C25A2B] bg-[#C25A2B]/5"
             : "border-[#DDD4C7] bg-[#FDFBF7] hover:border-[#C25A2B]/40",
@@ -43,10 +43,21 @@ export function CoverImageDropzone({ value, onChange }: CoverImageDropzoneProps)
         {value ? (
           <>
             <img src={value} alt="Cover preview" className="absolute inset-0 h-full w-full object-cover" />
-            <button type="button" onClick={(e) => { e.stopPropagation(); onChange(null) }}
-              className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80">
-              <Trash2Icon className="size-4" />
-            </button>
+            {/* Full hover overlay with Change Cover + Remove */}
+            <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/0 transition-all group-hover:bg-black/40">
+              <span className="rounded-md bg-white/90 px-3 py-1.5 text-xs font-medium text-foreground opacity-0 transition-opacity group-hover:opacity-100">
+                <UploadCloudIcon className="mr-1 inline size-3" />
+                Change Cover
+              </span>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onChange(null) }}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/90 text-white opacity-0 transition-opacity hover:bg-red-600 group-hover:opacity-100"
+                title="Remove cover image"
+              >
+                <Trash2Icon className="size-3.5" />
+              </button>
+            </div>
           </>
         ) : (
           <div className="flex flex-col items-center gap-2 text-muted-foreground">
@@ -100,10 +111,17 @@ export function ImageGallery({ images, onChange }: ImageGalleryProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-foreground">
-        Gallery Images
-        {images.length > 0 && <span className="ml-2 text-xs font-normal text-muted-foreground">({images.length})</span>}
-      </label>
+      <div className="flex items-center justify-between">
+        <label className="flex items-center gap-2 text-sm font-medium text-foreground">
+          <ImageIcon className="size-4 text-muted-foreground" />
+          Gallery Images
+        </label>
+        {images.length > 0 && (
+          <span className="rounded-full bg-[#EBE3D8] px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+            {images.length} {images.length === 1 ? "image" : "images"}
+          </span>
+        )}
+      </div>
       <div className="grid grid-cols-3 gap-2">
         {images.map((img, i) => (
           <div key={img.url + i} className="group relative aspect-square overflow-hidden rounded-lg border border-[#DDD4C7] bg-[#FDFBF7]">
